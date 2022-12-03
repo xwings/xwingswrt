@@ -11,6 +11,7 @@ REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
 
 if [ ! -d AutoBuild-Actions ]; then
     git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
+    cp CustomFiles/Depends/banner AutoBuild-Actions/CustomFiles/Depends/banner
 fi
 
 cd ${GITHUB_WORKSPACE} && git pull
