@@ -10,7 +10,7 @@ REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
 
 if [ ! -d AutoBuild-Actions ]; then
-    git clone -b master https://github.com/xwings/AutoBuild-Actions.git AutoBuild-Actions
+    git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
 fi
 
 cd ${GITHUB_WORKSPACE} && git pull
