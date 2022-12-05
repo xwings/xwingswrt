@@ -48,3 +48,7 @@ Firmware_Diy_Other
 make defconfig
 make download -j8
 make -j8
+
+if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ]; then
+    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz /mnt/shared0/www/firmwares/xwingsrt-x86-64-$Compile_Date-BIOS-Full.img.gz
+fi
