@@ -14,6 +14,21 @@ if [ ! -d AutoBuild-Actions ]; then
     cp CustomFiles/Depends/banner AutoBuild-Actions/CustomFiles/Depends/banner
 fi
 
+if [ -f AutoBuild-Actions/Configs/x86_64 ]; then
+    echo "" >> AutoBuild-Actions/Configs/x86_64
+    echo "# CUSTOM PACKAGES" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_luci-proto-qmi=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_kmod-mii=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_kmod-usb-wdm=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_uqmi=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_avahi-utils=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_avahi-dbus-daemon=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> AutoBuild-Actions/Configs/x86_64
+    echo "CONFIG_PACKAGE_wpad-mini=y" >> AutoBuild-Actions/Configs/x86_64
+fi    
+
 cd ${GITHUB_WORKSPACE} && git pull
 
 echo "CONFIG_FILE=$CONFIG_FILE" >> $GITHUB_ENV
@@ -26,7 +41,10 @@ echo "Display_Date=$(date +%Y/%m/%d)" >> $GITHUB_ENV
 
 cd ${GITHUB_WORKSPACE}
 if [ ! -d openwrt ]; then
-     git clone -b master https://github.com/coolsnowwolf/lede.git openwrt
+    git clone -b master https://github.com/coolsnowwolf/lede.git openwrt
+    git clone -b master https://github.com/openwrt/openwrt.git originalwrt
+    rm -rf openwrt/package/kernel/mac80211
+    cp -aRp originalwrt/package/kernel/mac80211 openwrt/package/kernel/
 fi
 
 cd ${GITHUB_WORKSPACE}/openwrt && git pull
@@ -50,7 +68,5 @@ make download -j8
 make -j8
 
 if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ]; then
-    cp
-    ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz /mnt/shared0/www/firmware/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz &&
-    rm -rf ${GITHUB_WORKSPACE}
+    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz /mnt/shared0/www/firmware/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz && rm -rf ${GITHUB_WORKSPACE}
 fi
