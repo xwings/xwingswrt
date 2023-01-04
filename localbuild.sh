@@ -14,20 +14,22 @@ if [ ! -d AutoBuild-Actions ]; then
     cp CustomFiles/Depends/banner AutoBuild-Actions/CustomFiles/Depends/banner
 fi
 
-if [ -f AutoBuild-Actions/Configs/x86_64 ]; then
-    echo "" >> AutoBuild-Actions/Configs/x86_64
-    echo "# CUSTOM PACKAGES" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_luci-proto-qmi=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_kmod-mii=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_kmod-usb-wdm=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_uqmi=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_avahi-utils=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_avahi-dbus-daemon=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> AutoBuild-Actions/Configs/x86_64
-    echo "CONFIG_PACKAGE_wpad-mini=y" >> AutoBuild-Actions/Configs/x86_64
-fi    
+if [ -f ${CONFIG_FILE} ]; then
+    echo "" >> ${CONFIG_FILE}
+    echo "# CUSTOM PACKAGES" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_luci-proto-qmi=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_kmod-mii=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_kmod-usb-wdm=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_uqmi=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_avahi-utils=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_avahi-dbus-daemon=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_wpad-mini=y" >> ${CONFIG_FILE}
+    echo "CONFIG_LUCI_LANG_en=y" >> ${CONFIG_FILE}
+    sed -i 's/^CONFIG_TARGET_ROOTFS_PARTSIZE=480/CONFIG_TARGET_ROOTFS_PARTSIZE=992/g' ${CONFIG_FILE}
+fi
 
 cd ${GITHUB_WORKSPACE} && git pull
 
@@ -68,5 +70,5 @@ make download -j8
 make -j8
 
 if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ]; then
-    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz /mnt/shared0/www/firmware/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz && rm -rf ${GITHUB_WORKSPACE}
+    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz /mnt/shared0/www/firmware/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
 fi
