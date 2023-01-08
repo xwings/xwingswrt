@@ -21,14 +21,14 @@ on:
   workflow_dispatch:
     inputs:
       Tempoary_CONFIG:
-        description: '配置文件'
+        description: 'Configuration'
         default: 'x86_64'
         type: choice
         options:
           - 'x86_64'
           - 'x86_64-AP'
       Tempoary_FLAG:
-        description: '固件标签'
+        description: 'Firmware Tagging'
         default: 'AUTO'
         type: choice
         options:
@@ -36,18 +36,18 @@ on:
           - 'Full'
           - 'AP'
       Tempoary_IP:
-        description: '固件 IP 地址 [可选]'
+        description: 'IP Address (Optional)'
         default: ''
       UPLOAD_RELEASES:
-        description: '上传固件到 Releases'
+        description: 'Upload to Releases'
         default: 'true'
         type: boolean
       UPLOAD_ARTIFACTS:
-        description: '上传固件到 Artifacts'
+        description: 'Upload to Artifacts'
         default: 'false'
         type: boolean
       UPLOAD_BIN_ARTIFACTS:
-        description: '上传 bin 文件夹到 Artifacts'
+        description: 'Upload bin to Artifacts'
         default: 'false'
         type: boolean
 
