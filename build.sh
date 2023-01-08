@@ -9,14 +9,14 @@ DEFAULT_SOURCE="coolsnowwolf/lede:master"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
 
-if [ ! -f ${CONFIG_FILE} ]; then
-    echo "Target not found: $CONFIG_FILE"
-    exit 1
-fi
-
 if [ ! -d AutoBuild-Actions ]; then
     git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
     cp CustomFiles/Depends/banner AutoBuild-Actions/CustomFiles/Depends/banner
+fi
+
+if [ ! -f ${CONFIG_FILE} ]; then
+    echo "Target not found: $CONFIG_FILE"
+    exit 1
 fi
 
 if [ -f ${CONFIG_FILE} ]; then
