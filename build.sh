@@ -1,7 +1,7 @@
 #!/bin/bash
 
 COMPILE_ARCH=$1
-CPU_COUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
+CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
 CODE_WORKSPACE="$(pwd)"
 GITHUB_WORKSPACE="${CODE_WORKSPACE}/AutoBuild-Actions"
 GITHUB_ENV="${GITHUB_WORKSPACE}/AutoBuild-Action_ENV"
@@ -35,8 +35,23 @@ if [ -f ${CONFIG_FILE} ]; then
     echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> ${CONFIG_FILE}
     echo "CONFIG_PACKAGE_wpad-mini=y" >> ${CONFIG_FILE}
     echo "CONFIG_LUCI_LANG_en=y" >> ${CONFIG_FILE}
+
     sed -i 's/^CONFIG_PACKAGE_luci-app-serverchan=y/# CONFIG_PACKAGE_luci-app-serverchan is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-pushbot=y/# CONFIG_PACKAGE_luci-app-pushbot is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-docker=y/# CONFIG_PACKAGE_luci-app-docker is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_DOCKER_CGROUP_OPTIONS=y/# CONFIG_DOCKER_CGROUP_OPTIONS is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_DOCKER_NET_MACVLAN=y/# CONFIG_DOCKER_NET_MACVLAN is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_DOCKER_OPTIONAL_FEATURES=y/# CONFIG_DOCKER_OPTIONAL_FEATURES is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_docker=y/# CONFIG_PACKAGE_docker is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_docker-compose=y/# CONFIG_PACKAGE_docker-compose is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-aliyundrive-webdav=y/# CONFIG_PACKAGE_luci-app-aliyundrive-webdav is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-qbittorrent=y/# CONFIG_PACKAGE_luci-app-qbittorrent is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-qbittorrent_static=y/# CONFIG_PACKAGE_luci-app-qbittorrent_static is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-aria2=y/# CONFIG_PACKAGE_luci-app-aria2 is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-adguardhome=y/# CONFIG_PACKAGE_luci-app-adguardhome is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic=y/# CONFIG_PACKAGE_luci-app-unblockmusic is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go=y/# CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go is not set/g' ${CONFIG_FILE}
+
     sed -i 's/^CONFIG_TARGET_ROOTFS_PARTSIZE=480/CONFIG_TARGET_ROOTFS_PARTSIZE=992/g' ${CONFIG_FILE}
 fi
 
@@ -58,8 +73,10 @@ if [ ! -d openwrt ]; then
     cp -aRp originalwrt/package/kernel/mac80211 openwrt/package/kernel/
 fi
 
-if [ -f ${UCI_DEFAULT_CONFIG}]; then
+if [ -f ${UCI_DEFAULT_CONFIG} ]; then
     sed -i 's/^uci set luci.main.lang=zh_cn/uci set luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG}
+    sed -i 's/^exit 0/# Customized init.d/g' ${CONFIG_FILE}
+    echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
 fi
 
 cd ${GITHUB_WORKSPACE}/openwrt && git pull
