@@ -1,4 +1,4 @@
-This a customized OpenWRT firmware.
+This a customized OpenWRT firmware, build for national level harden Internet acess. English firmware for those who needs it.
 
 Build Enviroment (Debian 11/bullseye):
 ```
