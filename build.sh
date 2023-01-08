@@ -105,7 +105,7 @@ if [ -z $FIRMWARE_SPACE ]; then
     FIRMWARE_SPACE=${CODE_WORKSPACE}
 fi
 
-if [ -d $FIRMWARE_SPACE ]; then
+if [ ! -d $FIRMWARE_SPACE ]; then
     mkdir -p $FIRMWARE_SPACE
 fi
 
