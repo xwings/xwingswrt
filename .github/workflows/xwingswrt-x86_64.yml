@@ -169,7 +169,7 @@ jobs:
       run: |
         chmod +x ./build.sh
         GITHUB_WORKSPACE_OLD=${GITHUB_WORKSPACE}
-        ./build.sh ${CONFIG_FILE}
+        ./build.sh ${CONFIG_FILE} ${GITHUB_WORKSPACE}/AutoBuild-Actions/openwrt/bin/Firmware
         GITHUB_WORKSPACE=${GITHUB_WORKSPACE_OLD}
         [ "$?" == 0 ] && echo "Compile_Result=true" >> $GITHUB_ENV || echo "Compile_Result=false" >> $GITHUB_ENV
 

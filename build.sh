@@ -17,10 +17,6 @@ if [ -z $COMPILE_ARCH ]; then
     exit 1
 fi
 
-if [ -z $FIRMWARE_SPACE ]; then
-    FIRMWARE_SPACE=${CODE_WORKSPACE}
-fi
-
 if [ ! -d AutoBuild-Actions ]; then
     git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
     cp CustomFiles/Depends/banner ${GITHUB_WORKSPACE}/CustomFiles/Depends/banner
@@ -105,9 +101,12 @@ make defconfig
 make download -j$CPU_COUNT
 make -j$CPU_COUNT
 
-if [ -z "$GITHUB_ACTIONS" ]; then
-    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${FIRMWARE_SPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
-else
-    mkdir ${GITHUB_WORKSPACE}/openwrt/bin/Firmware
-    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
+if [ -z $FIRMWARE_SPACE ]; then
+    FIRMWARE_SPACE=${CODE_WORKSPACE}
 fi
+
+if [ -d $FIRMWARE_SPACE ]; then
+    mkdir -p $FIRMWARE_SPACE
+fi
+
+cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${FIRMWARE_SPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
