@@ -2,7 +2,8 @@
 
 COMPILE_ARCH=$1
 CPU_COUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
-GITHUB_WORKSPACE="$(pwd)/AutoBuild-Actions"
+CODE_WORKSPACE="$(pwd)"
+GITHUB_WORKSPACE="${CODE_WORKSPACE}/AutoBuild-Actions"
 GITHUB_ENV="${GITHUB_WORKSPACE}/AutoBuild-Action_ENV"
 CONFIG_FILE="${GITHUB_WORKSPACE}/Configs/${COMPILE_ARCH}"
 DEFAULT_SOURCE="coolsnowwolf/lede:master"
@@ -74,10 +75,12 @@ make defconfig
 make download -j$CPU_COUNT
 make -j$CPU_COUNT
 
-Firmware_Diy_End
-
-if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ]; then
-    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${GITHUB_WORKSPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
+if [ -z "$GITHUB_ACTIONS" ]; then
+    if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ]; then
+        cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${CODE_WORKSPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
+    fi    
+else
+    Firmware_Diy_End
 fi
 
 
