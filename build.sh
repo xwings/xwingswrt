@@ -1,6 +1,7 @@
 #!/bin/bash
 
 COMPILE_ARCH=$1
+FIRMWARE_SPACE=$2
 CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
 CODE_WORKSPACE="$(pwd)"
 GITHUB_WORKSPACE="${CODE_WORKSPACE}/AutoBuild-Actions"
@@ -14,6 +15,10 @@ UCI_DEFAULT_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/lean/default-settings/fi
 if [ -z $COMPILE_ARCH ]; then
     echo "Ach not fined: ./build.sh x86_64"
     exit 1
+fi
+
+if [ -z $FIRMWARE_SPACE ]; then
+    FIRMWARE_SPACE=${CODE_WORKSPACE}
 fi
 
 if [ ! -d AutoBuild-Actions ]; then
@@ -101,11 +106,8 @@ make download -j$CPU_COUNT
 make -j$CPU_COUNT
 
 if [ -z "$GITHUB_ACTIONS" ]; then
-    if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ]; then
-        cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${CODE_WORKSPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
-    fi    
+    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${FIRMWARE_SPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
 else
-    Firmware_Diy_End
+    mkdir ${GITHUB_WORKSPACE}/openwrt/bin/Firmware
+    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
 fi
-
-
