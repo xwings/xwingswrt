@@ -75,8 +75,9 @@ fi
 
 if [ -f ${UCI_DEFAULT_CONFIG} ]; then
     sed -i 's/^uci set luci.main.lang=zh_cn/uci set luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG}
-    sed -i 's/^exit 0/# Customized init.d/g' ${CONFIG_FILE}
+    sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
     echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
+    echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
 fi
 
 cd ${GITHUB_WORKSPACE}/openwrt && git pull
