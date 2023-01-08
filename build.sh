@@ -9,6 +9,7 @@ CONFIG_FILE="${GITHUB_WORKSPACE}/Configs/${COMPILE_ARCH}"
 DEFAULT_SOURCE="coolsnowwolf/lede:master"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
+UCI_DEFAULT_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/lean/default-settings/files/zzz-default-settings"
 
 if [ -z $COMPILE_ARCH ]; then
     echo "Ach not fined: ./build.sh x86_64"
@@ -55,6 +56,10 @@ if [ ! -d openwrt ]; then
     git clone -b master https://github.com/openwrt/openwrt.git originalwrt
     rm -rf openwrt/package/kernel/mac80211
     cp -aRp originalwrt/package/kernel/mac80211 openwrt/package/kernel/
+fi
+
+if [ -f ${UCI_DEFAULT_CONFIG}]; then
+    sed -i 's/^uci set luci.main.lang=zh_cn/uci set luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG}
 fi
 
 cd ${GITHUB_WORKSPACE}/openwrt && git pull
