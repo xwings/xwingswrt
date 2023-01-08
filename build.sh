@@ -10,14 +10,14 @@ DEFAULT_SOURCE="coolsnowwolf/lede:master"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
 
-if [ ! -d AutoBuild-Actions ]; then
-    git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
-    cp CustomFiles/Depends/banner AutoBuild-Actions/CustomFiles/Depends/banner
+if [ -z $COMPILE_ARCH ]; then
+    echo "Ach not fined: ./build.sh x86_64"
+    exit 1
 fi
 
-if [ ! -f ${CONFIG_FILE} ]; then
-    echo "Target not found: $CONFIG_FILE"
-    exit 1
+if [ ! -d AutoBuild-Actions ]; then
+    git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
+    cp CustomFiles/Depends/banner ${GITHUB_WORKSPACE}/CustomFiles/Depends/banner
 fi
 
 if [ -f ${CONFIG_FILE} ]; then
@@ -34,6 +34,8 @@ if [ -f ${CONFIG_FILE} ]; then
     echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> ${CONFIG_FILE}
     echo "CONFIG_PACKAGE_wpad-mini=y" >> ${CONFIG_FILE}
     echo "CONFIG_LUCI_LANG_en=y" >> ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-serverchan=y/# CONFIG_PACKAGE_luci-app-serverchan is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-pushbot=y/# CONFIG_PACKAGE_luci-app-pushbot is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_TARGET_ROOTFS_PARTSIZE=480/CONFIG_TARGET_ROOTFS_PARTSIZE=992/g' ${CONFIG_FILE}
 fi
 
