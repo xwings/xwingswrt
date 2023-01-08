@@ -166,15 +166,10 @@ jobs:
       id: compile
       run: |
         chmod +x ./build.sh
-        ./build x86_64
+        GITHUB_WORKSPACE_OLD=${GITHUB_WORKSPACE}
+        ./build.sh ${CONFIG_FILE}
+        GITHUB_WORKSPACE=${GITHUB_WORKSPACE_OLD}
         [ "$?" == 0 ] && echo "Compile_Result=true" >> $GITHUB_ENV || echo "Compile_Result=false" >> $GITHUB_ENV
-
-    - name: Checkout Firmware
-      if: steps.compile.outcome == 'success' && !cancelled()
-      run: |
-        cd openwrt
-        source $GITHUB_WORKSPACE/Autobuild-Actions/Scripts/AutoBuild_Function.sh
-        Firmware_Diy_End
 
     - name: Upload Firmware to Artifacts
       uses: actions/upload-artifact@main

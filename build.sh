@@ -2,7 +2,6 @@
 
 COMPILE_ARCH=$1
 CPU_COUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
-GITHUB_WORKSPACE_OLD=$GITHUB_WORKSPACE
 GITHUB_WORKSPACE="$(pwd)/AutoBuild-Actions"
 GITHUB_ENV="${GITHUB_WORKSPACE}/AutoBuild-Action_ENV"
 CONFIG_FILE="${GITHUB_WORKSPACE}/Configs/${COMPILE_ARCH}"
@@ -81,4 +80,4 @@ if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-sq
     cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${GITHUB_WORKSPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
 fi
 
-GITHUB_WORKSPACE_OLD=$GITHUB_WORKSPACE
+
