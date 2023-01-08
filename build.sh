@@ -1,13 +1,19 @@
 #!/bin/bash
 
-COMPILE_OPTION=$1
+COMPILE_ARCH=$1
+CPU_COUNT=$(cat /proc/cpuinfo | grep processor | wc -l)
+GITHUB_WORKSPACE_OLD=$GITHUB_WORKSPACE
 GITHUB_WORKSPACE="$(pwd)/AutoBuild-Actions"
-CONFIG_FILE="x86_64"
 GITHUB_ENV="${GITHUB_WORKSPACE}/AutoBuild-Action_ENV"
-CONFIG_FILE="${GITHUB_WORKSPACE}/Configs/${CONFIG_FILE}"
+CONFIG_FILE="${GITHUB_WORKSPACE}/Configs/${COMPILE_ARCH}"
 DEFAULT_SOURCE="coolsnowwolf/lede:master"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
+
+if [ ! -f ${CONFIG_FILE} ]; then
+    echo "Target not found: $CONFIG_FILE"
+    exit 1
+fi
 
 if [ ! -d AutoBuild-Actions ]; then
     git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
@@ -66,9 +72,13 @@ Firmware_Diy
 Firmware_Diy_Other
 ./scripts/feeds install -a
 make defconfig
-make download -j8
-make -j8
+make download -j$CPU_COUNT
+make -j$CPU_COUNT
+
+Firmware_Diy_End
 
 if [ -f ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ]; then
-    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz /mnt/shared0/www/firmware/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
+    cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${GITHUB_WORKSPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
 fi
+
+GITHUB_WORKSPACE_OLD=$GITHUB_WORKSPACE
