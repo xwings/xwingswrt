@@ -14,6 +14,8 @@ UCI_DEFAULT_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/lean/default-settings/fi
 UCI_BASE_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/feeds/luci/luci-base/root/etc/uci-defaults/luci-base"
 Compile_Date="$(date +%Y%m%d%H%M)"
 Display_Date="$(date +%Y/%m/%d)"
+Tempoary_IP=""
+Tempoary_FLAG=""
 
 if [ -z $COMPILE_ARCH ]; then
     echo "Ach not fined: ./build.sh x86_64"
@@ -57,12 +59,12 @@ fi
 cd ${GITHUB_WORKSPACE} && git pull
 
 echo "CONFIG_FILE=$CONFIG_FILE" >> $GITHUB_ENV
-echo "Tempoary_IP=" >> $GITHUB_ENV
-echo "Tempoary_FLAG=" >> $GITHUB_ENV
+echo "Tempoary_IP=$Tempoary_IP" >> $GITHUB_ENV
+echo "Tempoary_FLAG=$Tempoary_FLAG" >> $GITHUB_ENV
 echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
 echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
-echo "Compile_Date=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
-echo "Display_Date=$(date +%Y/%m/%d)" >> $GITHUB_ENV
+echo "Compile_Date=$Compile_Date" >> $GITHUB_ENV
+echo "Display_Date=$Display_Date" >> $GITHUB_ENV
 
 cd ${GITHUB_WORKSPACE}
 if [ ! -d openwrt ]; then
