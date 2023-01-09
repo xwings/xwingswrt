@@ -32,7 +32,7 @@ cd xwingswrt
 ./build.sh x86_64 /tmp
 ```
 
-Pre-compile firmware is also avilable at https://github.com/xwings/xwingswrt/releases/tag/AutoUpdate
+Pre-compile firmware is also avilable at https://github.com/xwings/xwingswrt/releases
 
 Credits:
 - https://github.com/Hyy2001X
