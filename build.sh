@@ -11,6 +11,7 @@ DEFAULT_SOURCE="coolsnowwolf/lede:master"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
 UCI_DEFAULT_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/lean/default-settings/files/zzz-default-settings"
+UCI_BASE_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/feeds/luci/luci-base/root/etc/uci-defaults/luci-base"
 
 if [ -z $COMPILE_ARCH ]; then
     echo "Ach not fined: ./build.sh x86_64"
@@ -81,18 +82,17 @@ if [ $COMPILE_ARCH == "x86_64" ]; then
     cp -aRp originalwrt/package/kernel/mac80211 openwrt/package/kernel/    
 fi
 
+cd ${GITHUB_WORKSPACE}/openwrt && git pull
+./scripts/feeds update -a
+./scripts/feeds install -a
 
 if [ -f ${UCI_DEFAULT_CONFIG} ]; then
-    sed -i 's/^uci set luci.main.lang=zh_cn/uci set luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG}
+    sed -i 's/luci.main.lang=zh_cn/luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG} ${UCI_BASE_CONFIG}
     sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
     echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
     echo "" >> ${UCI_DEFAULT_CONFIG}
     echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
 fi
-
-cd ${GITHUB_WORKSPACE}/openwrt && git pull
-./scripts/feeds update -a
-./scripts/feeds install -a
 
 cd ${GITHUB_WORKSPACE}/openwrt
 chmod +x ${GITHUB_WORKSPACE}/Scripts/AutoBuild_*.sh
