@@ -49,9 +49,12 @@ if [ -f ${CONFIG_FILE} ]; then
     sed -i 's/^CONFIG_PACKAGE_luci-app-qbittorrent=y/# CONFIG_PACKAGE_luci-app-qbittorrent is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-qbittorrent_static=y/# CONFIG_PACKAGE_luci-app-qbittorrent_static is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-aria2=y/# CONFIG_PACKAGE_luci-app-aria2 is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-adguardhome=y/# CONFIG_PACKAGE_luci-app-adguardhome is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic=y/# CONFIG_PACKAGE_luci-app-unblockmusic is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go=y/# CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-uugamebooster=y/# CONFIG_PACKAGE_luci-app-uugamebooster is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-uhttpd=y/# CONFIG_PACKAGE_luci-app-uhttpd is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-usb-printer=y/# CONFIG_PACKAGE_luci-app-usb-printer is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-syncdial=y/# CONFIG_PACKAGE_luci-app-syncdial is not set/g' ${CONFIG_FILE}
 
     sed -i 's/^CONFIG_TARGET_ROOTFS_PARTSIZE=480/CONFIG_TARGET_ROOTFS_PARTSIZE=992/g' ${CONFIG_FILE}
 fi
@@ -80,6 +83,11 @@ if [ -f ${UCI_DEFAULT_CONFIG} ]; then
     echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
     echo "" >> ${UCI_DEFAULT_CONFIG}
     echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
+fi
+
+if [ -d ${GITHUB_WORKSPACE}/openwrt/package/other/AutoBuild-Packages/luci-app-onliner ]; then
+    cd ${GITHUB_WORKSPACE}/openwrt/package/other/AutoBuild-Packages/luci-app-onliner
+    grep -rl "在线用户" . | xargs sed -i 's/在线用户/Active Users/g'
 fi
 
 cd ${GITHUB_WORKSPACE}/openwrt && git pull
