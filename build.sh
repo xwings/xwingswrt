@@ -12,6 +12,8 @@ REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
 UCI_DEFAULT_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/lean/default-settings/files/zzz-default-settings"
 UCI_BASE_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/feeds/luci/luci-base/root/etc/uci-defaults/luci-base"
+Compile_Date="$(date +%Y%m%d%H%M)"
+Display_Date="$(date +%Y/%m/%d)"
 
 if [ -z $COMPILE_ARCH ]; then
     echo "Ach not fined: ./build.sh x86_64"
