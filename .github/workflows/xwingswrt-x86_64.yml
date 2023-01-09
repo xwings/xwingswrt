@@ -170,8 +170,7 @@ jobs:
         chmod +x ./build.sh
         GITHUB_WORKSPACE_OLD=${GITHUB_WORKSPACE}
         GITHUB_ENV_OLD=${GITHUB_ENV}
-        ./build.sh ${CONFIG_FILE} ${GITHUB_WORKSPACE}/openwrt/bin/Firmware
-        ls ${GITHUB_WORKSPACE}/openwrt/bin/Firmware
+        ./build.sh ${CONFIG_FILE}
         GITHUB_WORKSPACE=${GITHUB_WORKSPACE_OLD}
         GITHUB_ENV=${GITHUB_ENV_OLD}
         [ "$?" == 0 ] && echo "Compile_Result=true" >> $GITHUB_ENV || echo "Compile_Result=false" >> $GITHUB_ENV
@@ -181,21 +180,21 @@ jobs:
       if: env.UPLOAD_ARTIFACTS == 'true' && steps.compile.outcome == 'success' && !cancelled()
       with:
         name: ${{ env.CONFIG_FILE }}_firmware_${{ env.Compile_Date }}
-        path: openwrt/bin/Firmware
+        path: AutoBuild-Actions/openwrt/bin/Firmware
 
     - name: Upload bin to Artifacts
       uses: actions/upload-artifact@main
       if: env.UPLOAD_BIN_ARTIFACTS == 'true' && steps.compile.outcome == 'success' && !cancelled()
       with:
         name: ${{ env.CONFIG_FILE }}_bin_${{ env.Compile_Date }}
-        path: openwrt/bin
+        path: AutoBuild-Actions/openwrt/bin
 
     - name: Upload Firmware to Release
       uses: svenstaro/upload-release-action@v2
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: openwrt/bin/Firmware/*
+        file: AutoBuild-Actions/openwrt/bin/Firmware/*
         file_glob: true
         tag: AutoUpdate
         overwrite: true

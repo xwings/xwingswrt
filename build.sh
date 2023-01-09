@@ -29,12 +29,6 @@ if [ -f ${CONFIG_FILE} ]; then
     echo "CONFIG_PACKAGE_kmod-mii=y" >> ${CONFIG_FILE}
     echo "CONFIG_PACKAGE_kmod-usb-wdm=y" >> ${CONFIG_FILE}
     echo "CONFIG_PACKAGE_uqmi=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_avahi-utils=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_avahi-dbus-daemon=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_wpad-mini=y" >> ${CONFIG_FILE}
     echo "CONFIG_LUCI_LANG_en=y" >> ${CONFIG_FILE}
 
     sed -i 's/^CONFIG_PACKAGE_luci-app-serverchan=y/# CONFIG_PACKAGE_luci-app-serverchan is not set/g' ${CONFIG_FILE}
@@ -55,8 +49,6 @@ if [ -f ${CONFIG_FILE} ]; then
     sed -i 's/^CONFIG_PACKAGE_luci-app-uhttpd=y/# CONFIG_PACKAGE_luci-app-uhttpd is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-usb-printer=y/# CONFIG_PACKAGE_luci-app-usb-printer is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-syncdial=y/# CONFIG_PACKAGE_luci-app-syncdial is not set/g' ${CONFIG_FILE}
-
-    sed -i 's/^CONFIG_TARGET_ROOTFS_PARTSIZE=480/CONFIG_TARGET_ROOTFS_PARTSIZE=992/g' ${CONFIG_FILE}
 fi
 
 cd ${GITHUB_WORKSPACE} && git pull
@@ -72,10 +64,23 @@ echo "Display_Date=$(date +%Y/%m/%d)" >> $GITHUB_ENV
 cd ${GITHUB_WORKSPACE}
 if [ ! -d openwrt ]; then
     git clone -b master https://github.com/coolsnowwolf/lede.git openwrt
+fi
+
+cd ${GITHUB_WORKSPACE}
+if [ $COMPILE_ARCH == "x86_64" ]; then
+    echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_avahi-utils=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_avahi-dbus-daemon=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> ${CONFIG_FILE}
+    echo "CONFIG_PACKAGE_wpad-mini=y" >> ${CONFIG_FILE}
+    sed -i 's/^CONFIG_TARGET_ROOTFS_PARTSIZE=480/CONFIG_TARGET_ROOTFS_PARTSIZE=992/g' ${CONFIG_FILE}
+
     git clone -b master https://github.com/openwrt/openwrt.git originalwrt
     rm -rf openwrt/package/kernel/mac80211
-    cp -aRp originalwrt/package/kernel/mac80211 openwrt/package/kernel/
+    cp -aRp originalwrt/package/kernel/mac80211 openwrt/package/kernel/    
 fi
+
 
 if [ -f ${UCI_DEFAULT_CONFIG} ]; then
     sed -i 's/^uci set luci.main.lang=zh_cn/uci set luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG}
@@ -83,11 +88,6 @@ if [ -f ${UCI_DEFAULT_CONFIG} ]; then
     echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
     echo "" >> ${UCI_DEFAULT_CONFIG}
     echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
-fi
-
-if [ -d ${GITHUB_WORKSPACE}/openwrt/package/other/AutoBuild-Packages/luci-app-onliner ]; then
-    cd ${GITHUB_WORKSPACE}/openwrt/package/other/AutoBuild-Packages/luci-app-onliner
-    grep -rl "在线用户" . | xargs sed -i 's/在线用户/Active Users/g'
 fi
 
 cd ${GITHUB_WORKSPACE}/openwrt && git pull
@@ -118,4 +118,13 @@ if [ ! -d $FIRMWARE_SPACE ]; then
     mkdir -p $FIRMWARE_SPACE
 fi
 
-cp ${GITHUB_WORKSPACE}/openwrt/bin/targets/x86/64/openwrt-x86-64-generic-squashfs-combined.img.gz ${FIRMWARE_SPACE}/xwingswrt-x86-64-$Compile_Date-BIOS-Full.img.gz
+if [ ! -d ${GITHUB_WORKSPACE}/openwrt/bin/Firmware ]; then
+    mkdir ${GITHUB_WORKSPACE}/openwrt/bin/Firmware
+fi
+
+cd ${GITHUB_WORKSPACE}/openwrt
+Firmware_Diy_End
+
+if [ ! -z $GITHUB_ACTION ]; then
+    cp ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/* ${FIRMWARE_SPACE}
+fi
