@@ -125,6 +125,6 @@ fi
 cd ${GITHUB_WORKSPACE}/openwrt
 Firmware_Diy_End
 
-if [ ! -z $GITHUB_ACTION ]; then
+if [ -z $GITHUB_ACTION ]; then
     cp ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/* ${FIRMWARE_SPACE}
 fi
