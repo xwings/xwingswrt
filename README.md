@@ -1,6 +1,8 @@
-This a customized OpenWRT firmware, build for national level harden Internet acess. English firmware for those who needs it.
+[![Chat on Telegram](https://img.shields.io/badge/Chat%20on-Telegram-brightgreen.svg)](https://t.me/+xeozJ_-PolZiYmQ1k)
 
-Telegram: https://t.me/+xeozJ_-PolZiYmQ1
+---
+
+This a customized OpenWRT firmware, build for national level harden Internet acess. English firmware for those who needs it.
 
 Firmware includes :-
 - Linux Kernel 6.x
@@ -30,7 +32,7 @@ cd xwingswrt
 ./build.sh x86_64 /tmp
 ```
 
-Pre-compile firmware is also avilable at https://github.com/xwings/xwingswrt/releases/tag/AutoUpdate
+Pre-compile firmware is also avilable at https://github.com/xwings/xwingswrt/releases
 
 Credits:
 - https://github.com/Hyy2001X
