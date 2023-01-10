@@ -72,7 +72,7 @@ jobs:
 
     - name: Load Custom Variables
       run: |
-        git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
+        git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA $GITHUB_WORKSPACE/AutoBuild-Actions
         
         if [ -n "${{ github.event.inputs.Tempoary_CONFIG }}" ]
         then
