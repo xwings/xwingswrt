@@ -10,7 +10,7 @@ CONFIG_FILE="${GITHUB_WORKSPACE}/Configs/${COMPILE_ARCH}"
 DEFAULT_SOURCE="coolsnowwolf/lede:master"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
-UCI_DEFAULT_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/lean/default-settings/files/zzz-default-settings"
+UCI_DEFAULT_CONFIG="${GITHUB_WORKSPACE}GET_PROFILE/openwrt/package/lean/default-settings/files/zzz-default-settings"
 UCI_BASE_CONFIG="${GITHUB_WORKSPACE}/openwrt/package/feeds/luci/luci-base/root/etc/uci-defaults/luci-base"
 Compile_Date="$(date +%Y%m%d%H%M)"
 Display_Date="$(date +%Y/%m/%d)"
@@ -127,9 +127,33 @@ if [ ! -d ${GITHUB_WORKSPACE}/openwrt/bin/Firmware ]; then
     mkdir ${GITHUB_WORKSPACE}/openwrt/bin/Firmware
 fi
 
-cd ${GITHUB_WORKSPACE}/openwrt
-Firmware_Diy_End
+cd ${GITHUB_WORKSPACE}/openwrt/bin/targets
+BIN_ARCH="$(find . | grep sha256sum | awk -F \/ '{print $2}')"
+BIN_MODEL="$(find . | grep sha256sum | awk -F \/ '{print $3}')"
+
+if [ $BIN_ARCH == "x86" ]; then
+    TARGET_FIRMWARE_BIOS_END="combined.img.gz"
+    TARGET_FIRMWARE_EFI_END="combined-efi.img.gz"
+    TARGET_FIRMWARE_BIOS="$(ls ${GITHUB_WORKSPACE}/openwrt/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*$TARGET_FIRMWARE_BIOS_END)" 
+    TARGET_FIRMWARE_EFI="$(ls ${GITHUB_WORKSPACE}/openwrt/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*$TARGET_FIRMWARE_EFI_END)"
+    FIRMWARE_LIST=($TARGET_FIRMWARE_BIOS $TARGET_FIRMWARE_EFI)
+    FIRMWARE_LIST_END=($TARGET_FIRMWARE_BIOS_END $TARGET_FIRMWARE_EFI_END)
+else
+    TARGET_FIRMWARE_END="sysupgrade.bin"
+    TARGET_FIRMWARE="$(ls ${GITHUB_WORKSPACE}/openwrt/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*$TARGET_FIRMWARE_END)"
+    FIRMWARE_LIST=($TARGET_FIRMWARE)
+    FIRMWARE_LIST_END=($TARGET_FIRMWARE_END)    
+fi
+
+i=0
+for a in ${FIRMWARE_LIST[@]}; do
+    SHA256_END="$(sha256sum ${FIRMWARE_LIST[$i]} | awk '{print $1}' | cut -c1-5)"
+    cp ${FIRMWARE_LIST[$i]} ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/xwingswrt-$BIN_ARCH-$COMPILE_ARCH-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
+    i=$(($i + 1))
+done    
 
 if [ -z $GITHUB_ACTION ]; then
     cp ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/* ${FIRMWARE_SPACE}
 fi
+
+unset i
