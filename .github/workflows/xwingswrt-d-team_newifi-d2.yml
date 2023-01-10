@@ -164,6 +164,7 @@ jobs:
         ./build.sh ${CONFIG_FILE}
         GITHUB_WORKSPACE=${GITHUB_WORKSPACE_OLD}
         GITHUB_ENV=${GITHUB_ENV_OLD}
+        ls AutoBuild-Actions/openwrt/bin/Firmware
         [ "$?" == 0 ] && echo "Compile_Result=true" >> $GITHUB_ENV || echo "Compile_Result=false" >> $GITHUB_ENV
 
     - name: Upload Firmware to Artifacts
