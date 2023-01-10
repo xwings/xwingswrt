@@ -72,9 +72,6 @@ jobs:
 
     - name: Load Custom Variables
       run: |
-        mkdir $GITHUB_WORKSPACE/Configs
-        wget https://raw.githubusercontent.com/xwings/AutoBuild-Actions-BETA/master/Configs/$CONFIG_FILE -O $GITHUB_WORKSPACE/Configs/$CONFIG_FILE      
-        
         if [ -n "${{ github.event.inputs.Tempoary_CONFIG }}" ]
         then
             if [ -f "$GITHUB_WORKSPACE/Configs/${{ github.event.inputs.Tempoary_CONFIG }}" ]
@@ -86,14 +83,10 @@ jobs:
         else
             CONFIG_FILE=${{ env.CONFIG_FILE }}
         fi
-        if [ ! -f "$GITHUB_WORKSPACE/Configs/$CONFIG_FILE" ]
-        then
-            echo "CONFIG_FILE: [/Config/$CONFIG_FILE] is not detected ..."
-            exit 1
-        else
-            echo "CONFIG_FILE: [/Config/$CONFIG_FILE]"
-            echo "CONFIG_FILE=$CONFIG_FILE" >> $GITHUB_ENV
-        fi
+
+        echo "CONFIG_FILE: [/Config/$CONFIG_FILE]"
+        echo "CONFIG_FILE=$CONFIG_FILE" >> $GITHUB_ENV
+
         if [ -n "${{ github.event.inputs.Tempoary_IP }}" ]
         then
             echo "IP: [${{ github.event.inputs.Tempoary_IP }}]"
