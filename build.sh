@@ -1,13 +1,13 @@
 #!/bin/bash
 
-COMPILE_ARCH=$1
+KERNEL_CONFIG=$1
 FIRMWARE_SPACE=$2
 CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
 CODE_WORKSPACE="$(pwd)"
 FIRMWARE_WORKSPACE="${CODE_WORKSPACE}/AutoBuild-Actions"
 GITHUB_WORKSPACE="${FIRMWARE_WORKSPACE}"
 GITHUB_ENV="${FIRMWARE_WORKSPACE}/AutoBuild-Action_ENV"
-CONFIG_FILE="${FIRMWARE_WORKSPACE}/Configs/${COMPILE_ARCH}"
+CONFIG_FILE="${FIRMWARE_WORKSPACE}/Configs/${KERNEL_CONFIG}"
 DEFAULT_SOURCE="coolsnowwolf/lede:master"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
@@ -18,7 +18,7 @@ Display_Date="$(date +%Y/%m/%d)"
 Tempoary_IP=""
 Tempoary_FLAG=""
 
-if [ -z $COMPILE_ARCH ]; then
+if [ -z $KERNEL_CONFIG ]; then
     echo "Ach not fined: ./build.sh x86_64"
     exit 1
 fi
@@ -29,6 +29,11 @@ fi
 
 if [ -d ${CODE_WORKSPACE}/config ]; then
     cp ${CODE_WORKSPACE}/config/* cd ${FIRMWARE_WORKSPACE}/Configs
+fi
+
+if [ ! -f ${CONFIG_FILE} ]; then
+    echo "Config not fined: ${CONFIG_FILE}"
+    exit 1
 fi
 
 if [ -f ${CONFIG_FILE} ]; then
@@ -78,7 +83,7 @@ if [ ! -d openwrt ]; then
 fi
 
 cd ${FIRMWARE_WORKSPACE}
-if [ $COMPILE_ARCH == "x86_64" ]; then
+if [ $KERNEL_CONFIG == "x86_64" ]; then
     echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> ${CONFIG_FILE}
     echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> ${CONFIG_FILE}
     echo "CONFIG_PACKAGE_avahi-utils=y" >> ${CONFIG_FILE}
@@ -153,7 +158,7 @@ fi
 i=0
 for a in ${FIRMWARE_LIST[@]}; do
     SHA256_END="$(sha256sum ${FIRMWARE_LIST[$i]} | awk '{print $1}' | cut -c1-5)"
-    cp ${FIRMWARE_LIST[$i]} ${FIRMWARE_WORKSPACE}/openwrt/bin/Firmware/xwingswrt-$COMPILE_ARCH-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
+    cp ${FIRMWARE_LIST[$i]} ${FIRMWARE_WORKSPACE}/openwrt/bin/Firmware/xwingswrt-$KERNEL_CONFIG-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
     i=$(($i + 1))
 done    
 
