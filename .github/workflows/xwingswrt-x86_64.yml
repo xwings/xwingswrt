@@ -94,7 +94,7 @@ jobs:
         else
             CONFIG_FILE=${{ env.CONFIG_FILE }}
         fi
-        if [ ! -f "$GITHUB_WORKSPACE/Configs/$CONFIG_FILE" ]
+        if [ ! -f "$GITHUB_WORKSPACE/Autobuild-Actions/Configs/$CONFIG_FILE" ]
         then
             echo "CONFIG_FILE: [/Config/$CONFIG_FILE] is not detected ..."
             exit 1
