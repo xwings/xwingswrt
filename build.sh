@@ -148,7 +148,7 @@ fi
 i=0
 for a in ${FIRMWARE_LIST[@]}; do
     SHA256_END="$(sha256sum ${FIRMWARE_LIST[$i]} | awk '{print $1}' | cut -c1-5)"
-    cp ${FIRMWARE_LIST[$i]} ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/xwingswrt-$BIN_ARCH-$COMPILE_ARCH-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
+    cp ${FIRMWARE_LIST[$i]} ${GITHUB_WORKSPACE}/openwrt/bin/Firmware/xwingswrt-$COMPILE_ARCH-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
     i=$(($i + 1))
 done    
 
