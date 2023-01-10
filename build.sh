@@ -24,7 +24,6 @@ fi
 
 if [ ! -d AutoBuild-Actions ]; then
     git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA AutoBuild-Actions
-    cp CustomFiles/Depends/banner ${GITHUB_WORKSPACE}/CustomFiles/Depends/banner
 fi
 
 if [ -f ${CONFIG_FILE} ]; then
@@ -55,6 +54,8 @@ if [ -f ${CONFIG_FILE} ]; then
     sed -i 's/^CONFIG_PACKAGE_luci-app-usb-printer=y/# CONFIG_PACKAGE_luci-app-usb-printer is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-syncdial=y/# CONFIG_PACKAGE_luci-app-syncdial is not set/g' ${CONFIG_FILE}
 fi
+
+cp ${CODE_WORKSPACE}/CustomFiles/Depends/banner ${GITHUB_WORKSPACE}/CustomFiles/Depends/banner
 
 cd ${GITHUB_WORKSPACE} && git pull
 
