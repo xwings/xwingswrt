@@ -72,11 +72,12 @@ jobs:
 
     - name: Load Custom Variables
       run: |
-        git clone -b master https://github.com/xwings/AutoBuild-Actions-BETA $GITHUB_WORKSPACE/AutoBuild-Actions
+        mkdir $GITHUB_WORKSPACE/Configs
+        wget https://raw.githubusercontent.com/xwings/AutoBuild-Actions-BETA/master/Configs/$CONFIG_FILE -O $GITHUB_WORKSPACE/Configs/$CONFIG_FILE      
         
         if [ -n "${{ github.event.inputs.Tempoary_CONFIG }}" ]
         then
-            if [ -f "$GITHUB_WORKSPACE/Autobuild-Actions/Configs/${{ github.event.inputs.Tempoary_CONFIG }}" ]
+            if [ -f "$GITHUB_WORKSPACE/Configs/${{ github.event.inputs.Tempoary_CONFIG }}" ]
             then
                 CONFIG_FILE=${{ github.event.inputs.Tempoary_CONFIG }}
             else
@@ -85,10 +86,9 @@ jobs:
         else
             CONFIG_FILE=${{ env.CONFIG_FILE }}
         fi
-        if [ ! -f "$GITHUB_WORKSPACE/Autobuild-Actions/Configs/$CONFIG_FILE" ]
+        if [ ! -f "$GITHUB_WORKSPACE/Configs/$CONFIG_FILE" ]
         then
             echo "CONFIG_FILE: [/Config/$CONFIG_FILE] is not detected ..."
-            ls $GITHUB_WORKSPACE/Autobuild-Actions
             exit 1
         else
             echo "CONFIG_FILE: [/Config/$CONFIG_FILE]"
