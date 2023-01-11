@@ -63,7 +63,7 @@ cd xwingswrt
 ---
 #### Download:
 
-Pre-compile firmware is also avilable at https://github.com/xwings/xwingswrt/releases
+Pre-compiled firmware is also avilable at https://github.com/xwings/xwingswrt/releases
 
 ---
 
