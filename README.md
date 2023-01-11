@@ -58,6 +58,9 @@ cd xwingswrt
 ./build.sh x86_64 /tmp
 ```
 
+Username: root
+Password: password
+
 ---
 #### Download:
 
