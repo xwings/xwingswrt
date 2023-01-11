@@ -14,7 +14,12 @@ Firmware includes :-
 - WireGuard
 - ZeroTier
 
+Supported Hardware (As of now):
+- x86_64
+- [D-Team Newifi D2 (Newifi3)](https://openwrt.org/toh/hwdata/d-team/d-team_newifi_d2)
+
 ---
+
 #### Screenshot:
 
 [![Login](https://github.com/xwings/xwingswrt/raw/master/screenshot/login.png)](https://github.com/xwings/xwingswrt/raw/master/screenshot/login.png)
