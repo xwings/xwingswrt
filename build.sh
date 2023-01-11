@@ -65,7 +65,7 @@ if [ -f ${CONFIG_FILE} ]; then
     sed -i 's/^CONFIG_PACKAGE_luci-app-syncdial=y/# CONFIG_PACKAGE_luci-app-syncdial is not set/g' ${CONFIG_FILE}
 fi
 
-cp ${CODE_WORKSPACE}/CustomFiles/Depends/banner ${FIRMWARE_WORKSPACE}/CustomFiles/Depends/banner
+cp ${CODE_WORKSPACE}/customfiles/depends/banner ${FIRMWARE_WORKSPACE}/CustomFiles/Depends/banner
 
 cd ${FIRMWARE_WORKSPACE} && git pull
 
