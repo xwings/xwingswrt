@@ -30,8 +30,6 @@ Supported Hardware:
 
 #### Screenshot:
 
-[![Login](https://github.com/xwings/xwingswrt/raw/master/screenshot/login.png)](https://github.com/xwings/xwingswrt/raw/master/screenshot/login.png)
-
 [![Overview](https://github.com/xwings/xwingswrt/raw/master/screenshot/overview.png)](https://github.com/xwings/xwingswrt/raw/master/screenshot/overview.png)
 
 [![Realtime](https://github.com/xwings/xwingswrt/raw/master/screenshot/realtime.png)](https://github.com/xwings/xwingswrt/raw/master/screenshot/realtime.png)
@@ -63,7 +61,7 @@ cd xwingswrt
 ---
 #### Download:
 
-Pre-compile firmware is also avilable at https://github.com/xwings/xwingswrt/releases
+Pre-compiled firmware is also avilable at https://github.com/xwings/xwingswrt/releases
 
 ---
 
