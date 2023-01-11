@@ -20,6 +20,14 @@ Supported Hardware:
 
 ---
 
+#### How To Setup:
+
+- [How to Install Proxmox 7.3 - The Complete Guide](https://www.youtube.com/watch?v=6NfZ1R6jrXQ)
+- [Run an OpenWRT VM on Proxmox VE](https://www.youtube.com/watch?v=_fh7tnQW034)
+- [Install V2Ray Client on OpenWRT and Configure Vmess](https://www.youtube.com/watch?v=o7PC57_2734)
+
+---
+
 #### Screenshot:
 
 [![Login](https://github.com/xwings/xwingswrt/raw/master/screenshot/login.png)](https://github.com/xwings/xwingswrt/raw/master/screenshot/login.png)
@@ -29,14 +37,6 @@ Supported Hardware:
 [![Realtime](https://github.com/xwings/xwingswrt/raw/master/screenshot/realtime.png)](https://github.com/xwings/xwingswrt/raw/master/screenshot/realtime.png)
 
 [![OpenClash](https://github.com/xwings/xwingswrt/raw/master/screenshot/openclash.png)](https://github.com/xwings/xwingswrt/raw/master/screenshot/openclash.png)
-
----
-
-#### How To Setup:
-
-- [How to Install Proxmox 7.3 - The Complete Guide](https://www.youtube.com/watch?v=6NfZ1R6jrXQ)
-- [Run an OpenWRT VM on Proxmox VE](https://www.youtube.com/watch?v=_fh7tnQW034)
-- [Install V2Ray Client on OpenWRT and Configure Vmess](https://www.youtube.com/watch?v=o7PC57_2734)
 
 ---
 
