@@ -2,7 +2,7 @@
 
 ---
 
-This a customized OpenWRT firmware, build for national level harden Internet acess. English firmware for those who needs it.
+Customized OpenWRT firmware, build for national level harden Internet acess. LANG=EN mostly.
 
 Firmware includes :-
 - Linux Kernel 6.x
