@@ -32,7 +32,7 @@ Supported Hardware:
 
 ---
 
-#### Installation Guide (More or less):
+#### How To Setup:
 
 - [How to Install Proxmox 7.3 - The Complete Guide](https://www.youtube.com/watch?v=6NfZ1R6jrXQ)
 - [Run an OpenWRT VM on Proxmox VE](https://www.youtube.com/watch?v=_fh7tnQW034)
@@ -40,7 +40,7 @@ Supported Hardware:
 
 ---
 
-#### Building Guide:
+#### How To Build:
 
 Build Enviroment (Debian 11/bullseye):
 ```
