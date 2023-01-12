@@ -24,8 +24,8 @@ KERNEL_CONFIG=$config_out
 FIRMWARE_SPACE=$path_out
 CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
 CODE_WORKSPACE="$(pwd)"
-FIRMWARE_WORKSPACE="${CODE_WORKSPACE}/build"
-CONFIG_FILE="${FIRMWARE_WORKSPACE}/config/${KERNEL_CONFIG}"
+BUILD_WORKSPACE="${CODE_WORKSPACE}/build"
+CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}"
 DEFAULT_SOURCE=$repo_out
 if [ -z $DEFAULT_SOURCE ]; then
     DEFAULT_SOURCE="coolsnowwolf/lede:master"
@@ -33,13 +33,13 @@ fi
 REPO_NAME="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 2)"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
-OPENWRT_BASE="${FIRMWARE_WORKSPACE}/${REPO_NAME}"
+OPENWRT_BASE="${BUILD_WORKSPACE}/${REPO_NAME}"
 UCI_DEFAULT_CONFIG="${OPENWRT_BASE}/package/lean/default-settings/files/zzz-default-settings"
 UCI_BASE_CONFIG="${OPENWRT_BASE}/package/feeds/luci/luci-base/root/etc/uci-defaults/luci-base"
 BASE_FILES="${OPENWRT_BASE}/package/base-files/files"
 FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
-Compile_Date="$(date +%Y%m%d%H%M)"
+BUILD_DATE="$(date +%Y%m%d%H%M)"
 
 source ${CODE_WORKSPACE}/packages.sh
 
@@ -48,9 +48,9 @@ if [ -z $KERNEL_CONFIG ]; then
     exit 1
 fi
 
-if [ ! -d ${FIRMWARE_WORKSPACE}/config ]; then
-    mkdir -p ${FIRMWARE_WORKSPACE}/config
-    cp ${CODE_WORKSPACE}/config/*  ${FIRMWARE_WORKSPACE}/config
+if [ ! -d ${BUILD_WORKSPACE}/config ]; then
+    mkdir -p ${BUILD_WORKSPACE}/config
+    cp ${CODE_WORKSPACE}/config/*  ${BUILD_WORKSPACE}/config
 fi
 
 if [ ! -f ${CONFIG_FILE} ]; then
@@ -82,20 +82,26 @@ if [ -f ${CONFIG_FILE} ]; then
     sed -i 's/^CONFIG_PACKAGE_luci-app-aria2=y/# CONFIG_PACKAGE_luci-app-aria2 is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic=y/# CONFIG_PACKAGE_luci-app-unblockmusic is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go=y/# CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_UnblockNeteaseMusic-Go=y/# CONFIG_PACKAGE_UnblockNeteaseMusic-Go is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-uugamebooster=y/# CONFIG_PACKAGE_luci-app-uugamebooster is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-uhttpd=y/# CONFIG_PACKAGE_luci-app-uhttpd is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-usb-printer=y/# CONFIG_PACKAGE_luci-app-usb-printer is not set/g' ${CONFIG_FILE}
     sed -i 's/^CONFIG_PACKAGE_luci-app-syncdial=y/# CONFIG_PACKAGE_luci-app-syncdial is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-vsftpd=y/# CONFIG_PACKAGE_luci-app-vsftpd is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-onliner=y/# CONFIG_PACKAGE_luci-app-onliner is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_luci-app-nfs=y/# CONFIG_PACKAGE_luci-app-nfs is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_autosamba=y/# CONFIG_PACKAGE_autosamba is not set/g' ${CONFIG_FILE}
+    sed -i 's/^CONFIG_PACKAGE_davfs2=y/# CONFIG_PACKAGE_davfs2 is not set/g' ${CONFIG_FILE}
 fi
 
-cd ${FIRMWARE_WORKSPACE}
-if [ ! -d ${FIRMWARE_WORKSPACE}/${REPO_NAME} ]; then
-    git clone -b master ${REPO_URL}.git
+cd ${BUILD_WORKSPACE}
+if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
+    git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git
 fi
 
 cp ${CODE_WORKSPACE}/customfiles/depends/banner ${BASE_FILES}/etc
 
-cd ${FIRMWARE_WORKSPACE}
+cd ${BUILD_WORKSPACE}
 if [ $KERNEL_CONFIG == "x86_64" ]; then
     echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> ${CONFIG_FILE}
     echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> ${CONFIG_FILE}
@@ -168,8 +174,8 @@ if [ ! -d $FIRMWARE_SPACE ]; then
     mkdir -p $FIRMWARE_SPACE
 fi
 
-if [ ! -d ${FIRMWARE_WORKSPACE}/firmware ]; then
-    mkdir -p ${FIRMWARE_WORKSPACE}/firmware
+if [ ! -d ${BUILD_WORKSPACE}/firmware ]; then
+    mkdir -p ${BUILD_WORKSPACE}/firmware
 fi
 
 cd ${OPENWRT_BASE}/bin/targets
@@ -193,10 +199,10 @@ fi
 i=0
 for a in ${FIRMWARE_LIST[@]}; do
     SHA256_END="$(sha256sum ${FIRMWARE_LIST[$i]} | awk '{print $1}' | cut -c1-5)"
-    cp ${FIRMWARE_LIST[$i]} ${FIRMWARE_WORKSPACE}/firmware/xwingswrt-$KERNEL_CONFIG-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
+    cp ${FIRMWARE_LIST[$i]} ${BUILD_WORKSPACE}/firmware/xwingswrt-$KERNEL_CONFIG-$BUILD_DATE-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
     i=$(($i + 1))
 done    
 
 if [ -z $GITHUB_ACTION ] && [ ! -z $FIRMWARE_SPACE ]; then
-    cp ${FIRMWARE_WORKSPACE}/firmware/* ${FIRMWARE_SPACE}
+    cp ${BUILD_WORKSPACE}/firmware/* ${FIRMWARE_SPACE}
 fi
