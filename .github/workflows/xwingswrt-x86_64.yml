@@ -162,11 +162,7 @@ jobs:
       id: compile
       run: |
         chmod +x ./build.sh
-        GITHUB_WORKSPACE_OLD=${GITHUB_WORKSPACE}
-        GITHUB_ENV_OLD=${GITHUB_ENV}
         ./build.sh ${CONFIG_FILE}
-        GITHUB_WORKSPACE=${GITHUB_WORKSPACE_OLD}
-        GITHUB_ENV=${GITHUB_ENV_OLD}
         [ "$?" == 0 ] && echo "Compile_Result=true" >> $GITHUB_ENV || echo "Compile_Result=false" >> $GITHUB_ENV
 
     - name: Upload Firmware to Artifacts
@@ -174,7 +170,7 @@ jobs:
       if: env.UPLOAD_ARTIFACTS == 'true' && steps.compile.outcome == 'success' && !cancelled()
       with:
         name: ${{ env.CONFIG_FILE }}_firmware_${{ env.Compile_Date }}
-        path: AutoBuild-Actions/openwrt/bin/Firmware
+        path: build/firmware
 
     - name: Upload bin to Artifacts
       uses: actions/upload-artifact@main
@@ -188,7 +184,7 @@ jobs:
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: AutoBuild-Actions/openwrt/bin/Firmware/*
+        file: build/firmware/*
         file_glob: true
         tag: latest
         overwrite: true
