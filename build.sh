@@ -99,8 +99,6 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git
 fi
 
-cp ${CODE_WORKSPACE}/customfiles/depends/banner ${BASE_FILES}/etc
-
 cd ${BUILD_WORKSPACE}
 if [ $KERNEL_CONFIG == "x86_64" ]; then
     git clone -b master https://github.com/openwrt/openwrt.git openwrt
@@ -129,10 +127,9 @@ EOF
     echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
 fi
 
+cp ${CODE_WORKSPACE}/customfiles/depends/banner ${BASE_FILES}/etc
 sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
 sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
-
-cd ${OPENWRT_BASE}
 cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 make defconfig
 rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
