@@ -103,25 +103,12 @@ cp ${CODE_WORKSPACE}/customfiles/depends/banner ${BASE_FILES}/etc
 
 cd ${BUILD_WORKSPACE}
 if [ $KERNEL_CONFIG == "x86_64" ]; then
-    echo "CONFIG_PACKAGE_iwlwifi-firmware-ax210=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_kmod-iwlwifi=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_avahi-utils=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_avahi-dbus-daemon=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_libavahi-dbus-support=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_wpad-mini=y" >> ${CONFIG_FILE}
-    echo "CONFIG_DEFAULT_HOSTNAME=\"OpenWrt\"" >> ${CONFIG_FILE}
-    echo "CONFIG_BTRFS_FS=y" >> ${CONFIG_FILE}
-    echo "CONFIG_XFS_FS=y" >> ${CONFIG_FILE}
-
-    sed -i 's/^CONFIG_TARGET_ROOTFS_PARTSIZE=480/CONFIG_TARGET_ROOTFS_PARTSIZE=992/g' ${CONFIG_FILE}
-    sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
-
     git clone -b master https://github.com/openwrt/openwrt.git openwrt
     rm -rf ${OPENWRT_BASE}/package/kernel/mac80211
     cp -aRp openwrt/package/kernel/mac80211 ${OPENWRT_BASE}/package/kernel/    
 fi
 
-cd ${OPENWRT_BASE} && git pull
+cd ${OPENWRT_BASE}
 ./scripts/feeds update -a
 ./scripts/feeds install -a
 
@@ -143,6 +130,7 @@ EOF
 fi
 
 sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
+sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
 
 cd ${OPENWRT_BASE}
 cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
