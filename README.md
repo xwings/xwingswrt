@@ -56,11 +56,13 @@ git clone https://github.com/xwings/xwingswrt.git
 ```
 
 Compile:
-- argv 1: Arch, for now only support x86_64
-- argv 2: Firmware location, after compile 
+-c : kernel config
+-p : Firmware location, after compile (optional)
+-r : github repo, default: coolsnowwolf/lede:master (optional)
+
 ```
 cd xwingswrt
-./build.sh x86_64 /tmp
+./build.sh -c x86_64 -p /tmp -r coolsnowwolf/lede:master
 ```
 
 Username: root
