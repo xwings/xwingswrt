@@ -16,7 +16,6 @@ Firmware includes :-
 
 Supported Hardware:
 - x86_64
-- [D-Team Newifi D2 (Newifi3)](https://openwrt.org/toh/hwdata/d-team/d-team_newifi_d2)
 
 ---
 
