@@ -116,7 +116,7 @@ make defconfig
 rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 rm -r ${FEEDS_LUCI}/luci-theme-argon*
 
-for p in $ALL_PACKAGES; do
+for p in $ADD_PACKAGES; do
     PACKAGE_SOURCE=$p
     PACKAGE_NAME="$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE} | cut -d \/ -f 2)"
     PACKAGE_URL="https://github.com/$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE})"

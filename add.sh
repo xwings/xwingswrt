@@ -2,7 +2,7 @@
 # users/repo:branch:openwrt_package_location
 #
 
-ALL_PACKAGES="
+ADD_PACKAGES="
                 xiaorouji/openwrt-passwall:luci:passwall-luci
                 xiaorouji/openwrt-passwall:packages:passwall-depends
                 pymumu/luci-app-smartdns:lede:other
