@@ -98,7 +98,7 @@ jobs:
         REPO_BRANCH=$(cut -d \: -f 2 <<< ${{ env.DEFAULT_SOURCE }})
         echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
         echo "REPO_BRANCH=$REPO_BRANCH" >> $GITHUB_ENV
-        echo "Compile_Date=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+        echo "Compile_Date=$(date +%Y%m%d)" >> $GITHUB_ENV
         echo "Display_Date=$(date +%Y/%m/%d)" >> $GITHUB_ENV
         if [[ -z "${{ github.event.inputs.Tempoary_CONFIG }}" ]]; then
             echo "TIMED_TRIGGER=true" >> $GITHUB_ENV
@@ -174,13 +174,13 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: build/firmware/*
         file_glob: true
-        tag: latest
+        tag: ${{ env.Compile_Date }}
         overwrite: true
         
     - name: Refresh API (1/2)
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
       run: |
-        wget https://api.github.com/repos/${{github.repository}}/releases/tags/latest -O API
+        wget https://api.github.com/repos/${{github.repository}}/releases/tags/${{ env.Compile_Date }} -O API
         
     - name: Refresh API (2/2)
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
@@ -189,7 +189,7 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ./API
         file_glob: true
-        tag: latest
+        tag: ${{ env.Compile_Date }}
         overwrite: true
 
     - name: Delete old Workflow Runs
