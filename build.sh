@@ -44,7 +44,7 @@ Compile_Date="$(date +%Y%m%d%H%M)"
 source ${CODE_WORKSPACE}/packages.sh
 
 if [ -z $KERNEL_CONFIG ]; then
-    echo "Config $KERNEL_CONFIG not found, usage ./build.sh -c x86_64"
+    echo "Config [$KERNEL_CONFIG] not found, usage ./build.sh -c x86_64"
     exit 1
 fi
 
