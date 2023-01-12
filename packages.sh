@@ -1,3 +1,7 @@
+# How to use this file:
+# users/repo:branch:openwrt_package_location
+#
+
 ALL_PACKAGES="
                 xiaorouji/openwrt-passwall:luci:passwall-luci
                 xiaorouji/openwrt-passwall:packages:passwall-depends
