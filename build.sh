@@ -159,9 +159,6 @@ for p in $ALL_PACKAGES; do
     fi
 done
 
-# git clone -b dev --single-branch --depth 1 https://github.com/vernesong/OpenClash.git ${FIRMWARE_WORKSPACE}/OpenClash
-# cp -aRp ${FIRMWARE_WORKSPACE}/luci-app-openclash ${OPENWRT_BASE}/package/other/
-
 ./scripts/feeds install -a
 make defconfig
 make download -j$CPU_COUNT
