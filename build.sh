@@ -41,7 +41,8 @@ FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
 BUILD_DATE="$(date +%Y%m%d%H%M)"
 
-source ${CODE_WORKSPACE}/packages.sh
+source ${CODE_WORKSPACE}/add.sh
+source ${CODE_WORKSPACE}/del.sh
 
 if [ -z $KERNEL_CONFIG ]; then
     echo "Config [$KERNEL_CONFIG] not found, usage ./build.sh -c x86_64"
@@ -68,30 +69,10 @@ if [ -f ${CONFIG_FILE} ]; then
     echo "CONFIG_LUCI_LANG_en=y" >> ${CONFIG_FILE}
     echo "CONFIG_FAT_DEFAULT_IOCHARSET=\"utf8\"" >> ${CONFIG_FILE}
 
-    sed -i 's/^CONFIG_PACKAGE_luci-app-serverchan=y/# CONFIG_PACKAGE_luci-app-serverchan is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-pushbot=y/# CONFIG_PACKAGE_luci-app-pushbot is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-docker=y/# CONFIG_PACKAGE_luci-app-docker is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_DOCKER_CGROUP_OPTIONS=y/# CONFIG_DOCKER_CGROUP_OPTIONS is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_DOCKER_NET_MACVLAN=y/# CONFIG_DOCKER_NET_MACVLAN is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_DOCKER_OPTIONAL_FEATURES=y/# CONFIG_DOCKER_OPTIONAL_FEATURES is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_docker=y/# CONFIG_PACKAGE_docker is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_docker-compose=y/# CONFIG_PACKAGE_docker-compose is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-aliyundrive-webdav=y/# CONFIG_PACKAGE_luci-app-aliyundrive-webdav is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-qbittorrent=y/# CONFIG_PACKAGE_luci-app-qbittorrent is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-qbittorrent_static=y/# CONFIG_PACKAGE_luci-app-qbittorrent_static is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-aria2=y/# CONFIG_PACKAGE_luci-app-aria2 is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic=y/# CONFIG_PACKAGE_luci-app-unblockmusic is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go=y/# CONFIG_PACKAGE_luci-app-unblockmusic_INCLUDE_UnblockNeteaseMusic_Go is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_UnblockNeteaseMusic-Go=y/# CONFIG_PACKAGE_UnblockNeteaseMusic-Go is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-uugamebooster=y/# CONFIG_PACKAGE_luci-app-uugamebooster is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-uhttpd=y/# CONFIG_PACKAGE_luci-app-uhttpd is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-usb-printer=y/# CONFIG_PACKAGE_luci-app-usb-printer is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-syncdial=y/# CONFIG_PACKAGE_luci-app-syncdial is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-vsftpd=y/# CONFIG_PACKAGE_luci-app-vsftpd is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-onliner=y/# CONFIG_PACKAGE_luci-app-onliner is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_luci-app-nfs=y/# CONFIG_PACKAGE_luci-app-nfs is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_autosamba=y/# CONFIG_PACKAGE_autosamba is not set/g' ${CONFIG_FILE}
-    sed -i 's/^CONFIG_PACKAGE_davfs2=y/# CONFIG_PACKAGE_davfs2 is not set/g' ${CONFIG_FILE}
+    for p in $DEL_PACKAGES; do
+        sed -i "/${p}/d" ${CONFIG_FILE}
+    done
+    unset p
 fi
 
 cd ${BUILD_WORKSPACE}
@@ -149,6 +130,7 @@ for p in $ALL_PACKAGES; do
         rm -rf ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/
     fi
 done
+unset p
 
 ./scripts/feeds install -a
 make defconfig
