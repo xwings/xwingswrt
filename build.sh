@@ -143,8 +143,8 @@ if [ ! -d $FIRMWARE_SPACE ]; then
     mkdir -p $FIRMWARE_SPACE
 fi
 
-if [ ! -d ${OPENWRT_BASE}/bin/firmware ]; then
-    mkdir -p ${OPENWRT_BASE}/bin/firmware
+if [ ! -d ${FIRMWARE_WORKSPACE}/firmware ]; then
+    mkdir -p ${FIRMWARE_WORKSPACE}/firmware
 fi
 
 cd ${OPENWRT_BASE}/bin/targets
@@ -168,10 +168,10 @@ fi
 i=0
 for a in ${FIRMWARE_LIST[@]}; do
     SHA256_END="$(sha256sum ${FIRMWARE_LIST[$i]} | awk '{print $1}' | cut -c1-5)"
-    cp ${FIRMWARE_LIST[$i]} ${OPENWRT_BASE}/bin/firmware/xwingswrt-$KERNEL_CONFIG-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
+    cp ${FIRMWARE_LIST[$i]} ${FIRMWARE_WORKSPACE}/firmware/xwingswrt-$KERNEL_CONFIG-$Compile_Date-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
     i=$(($i + 1))
 done    
 
 if [ -z $GITHUB_ACTION ]; then
-    cp ${OPENWRT_BASE}/bin/firmware/* ${FIRMWARE_SPACE}
+    cp ${FIRMWARE_WORKSPACE}/firmware/* ${FIRMWARE_SPACE}
 fi

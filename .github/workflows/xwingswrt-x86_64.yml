@@ -181,7 +181,7 @@ jobs:
       if: env.UPLOAD_BIN_ARTIFACTS == 'true' && steps.compile.outcome == 'success' && !cancelled()
       with:
         name: ${{ env.CONFIG_FILE }}_bin_${{ env.Compile_Date }}
-        path: AutoBuild-Actions/openwrt/bin
+        path: build/firmware
 
     - name: Upload Firmware to Release
       uses: svenstaro/upload-release-action@v2
@@ -190,13 +190,13 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: AutoBuild-Actions/openwrt/bin/Firmware/*
         file_glob: true
-        tag: AutoUpdate
+        tag: latest
         overwrite: true
         
     - name: Refresh API (1/2)
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
       run: |
-        wget https://api.github.com/repos/${{github.repository}}/releases/tags/AutoUpdate -O API
+        wget https://api.github.com/repos/${{github.repository}}/releases/tags/latest -O API
         
     - name: Refresh API (2/2)
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
@@ -205,7 +205,7 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ./API
         file_glob: true
-        tag: AutoUpdate
+        tag: latest
         overwrite: true
 
     - name: Delete old Workflow Runs
