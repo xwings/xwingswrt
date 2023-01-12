@@ -23,33 +23,21 @@ on:
       Tempoary_CONFIG:
         description: 'Configuration'
         default: 'x86_64'
-        type: choice
-        options:
-          - 'x86_64'
-          - 'x86_64-AP'
       Tempoary_FLAG:
         description: 'Firmware Tagging'
         default: 'AUTO'
-        type: choice
-        options:
-          - 'AUTO'
-          - 'Full'
-          - 'AP'
-      Tempoary_IP:
-        description: 'IP Address (Optional)'
-        default: ''
       UPLOAD_RELEASES:
         description: 'Upload to Releases'
         default: 'true'
         type: boolean
-      UPLOAD_ARTIFACTS:
-        description: 'Upload to Artifacts'
-        default: 'false'
-        type: boolean
-      UPLOAD_BIN_ARTIFACTS:
-        description: 'Upload bin to Artifacts'
-        default: 'false'
-        type: boolean
+      # UPLOAD_ARTIFACTS:
+      #   description: 'Upload to Artifacts'
+      #   default: 'false'
+      #   type: boolean
+      # UPLOAD_BIN_ARTIFACTS:
+      #   description: 'Upload bin to Artifacts'
+      #   default: 'false'
+      #   type: boolean
 
 ### 环境变量设置
 env:
