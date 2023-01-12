@@ -50,15 +50,15 @@ mkisofs msmtp nano ninja-build p7zip p7zip-full patch pkgconf python2.7 python3 
 rsync scons squashfs-tools subversion swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
 ```
 
-Clone the repo:
+Clone:
 ```
 git clone https://github.com/xwings/xwingswrt.git
 ```
 
-Compile:
--c : kernel config
--p : Firmware location, after compile (optional)
--r : github repo, default: coolsnowwolf/lede:master (optional)
+Build option:
+- -c : kernel config
+- -p : Firmware location, after compile (optional)
+- -r : github repo, default: coolsnowwolf/lede:master (optional)
 
 ```
 cd xwingswrt
