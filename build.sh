@@ -1,15 +1,39 @@
 #!/bin/bash
 
-KERNEL_CONFIG=$1
-FIRMWARE_SPACE=$2
+while getopts ":c:p:r:" opt; do
+  case $opt in
+    c) config_out="$OPTARG"
+    ;;
+    p) path_out="$OPTARG"
+    ;;
+    r) repo_out="$OPTARG"
+    ;;    
+    \?) echo "Invalid option -$OPTARG" >&2
+    exit 1
+    ;;
+  esac
+
+  case $OPTARG in
+    -*) echo "Option $opt needs a valid argument"
+    exit 1
+    ;;
+  esac
+done
+
+KERNEL_CONFIG=$config_out
+FIRMWARE_SPACE=$path_out
 CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
 CODE_WORKSPACE="$(pwd)"
 FIRMWARE_WORKSPACE="${CODE_WORKSPACE}/build"
 CONFIG_FILE="${FIRMWARE_WORKSPACE}/config/${KERNEL_CONFIG}"
-DEFAULT_SOURCE="coolsnowwolf/lede:master"
+DEFAULT_SOURCE=$repo_out
+if [ -z $DEFAULT_SOURCE ]; then
+    DEFAULT_SOURCE="coolsnowwolf/lede:master"
+fi
+REPO_NAME="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 2)"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
-OPENWRT_BASE="${FIRMWARE_WORKSPACE}/lede"
+OPENWRT_BASE="${FIRMWARE_WORKSPACE}/${REPO_NAME}"
 UCI_DEFAULT_CONFIG="${OPENWRT_BASE}/package/lean/default-settings/files/zzz-default-settings"
 UCI_BASE_CONFIG="${OPENWRT_BASE}/package/feeds/luci/luci-base/root/etc/uci-defaults/luci-base"
 BASE_FILES="${OPENWRT_BASE}/package/base-files/files"
@@ -17,8 +41,10 @@ FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
 Compile_Date="$(date +%Y%m%d%H%M)"
 
+source ${CODE_WORKSPACE}/packages.sh
+
 if [ -z $KERNEL_CONFIG ]; then
-    echo "config not found: ./build.sh x86_64"
+    echo "Config $KERNEL_CONFIG not found, usage ./build.sh -c x86_64"
     exit 1
 fi
 
@@ -63,8 +89,8 @@ if [ -f ${CONFIG_FILE} ]; then
 fi
 
 cd ${FIRMWARE_WORKSPACE}
-if [ ! -d lede ]; then
-    git clone -b master https://github.com/coolsnowwolf/lede.git
+if [ ! -d ${FIRMWARE_WORKSPACE}/${REPO_NAME} ]; then
+    git clone -b master ${REPO_URL}.git
 fi
 
 cp ${CODE_WORKSPACE}/customfiles/depends/banner ${BASE_FILES}/etc
@@ -116,28 +142,30 @@ cd ${OPENWRT_BASE}
 cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 make defconfig
 rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
-
 rm -r ${FEEDS_LUCI}/luci-theme-argon*
-git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git ${OPENWRT_BASE}/package/themes/luci-theme-argon
-git clone -b main https://github.com/thinktip/luci-theme-neobird.git ${OPENWRT_BASE}/package/themes/luci-theme-neobird
-git clone -b master https://github.com/jerrykuku/luci-app-argon-config.git ${OPENWRT_BASE}/package/lean/luci-app-argon-config
-git clone -b main https://github.com/iwrt/luci-app-ikoolproxy.git ${OPENWRT_BASE}/package/other/luci-app-ikoolproxy
-git clone -b master https://github.com/fw876/helloworld.git ${OPENWRT_BASE}/package/other/helloworld
-git clone -b lede https://github.com/pymumu/luci-app-smartdns.git ${OPENWRT_BASE}/package/other/luci-app-smartdns
-git clone -b packages https://github.com/xiaorouji/openwrt-passwall.git ${OPENWRT_BASE}/package/passwall-depends/openwrt-passwall
-git clone -b luci https://github.com/xiaorouji/openwrt-passwall.git ${OPENWRT_BASE}/package/passwall-luci/openwrt-passwall
 
-git clone -b dev --single-branch --depth 1 https://github.com/vernesong/OpenClash.git ${FIRMWARE_WORKSPACE}/OpenClash
-cp -aRp ${FIRMWARE_WORKSPACE}/luci-app-openclash ${OPENWRT_BASE}/package/other/
+for p in $ALL_PACKAGES; do
+    PACKAGE_SOURCE=$p
+    PACKAGE_NAME="$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE} | cut -d \/ -f 2)"
+    PACKAGE_URL="https://github.com/$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE})"
+    PACKAGE_BRANCH=$(cut -d \: -f 2 <<< ${PACKAGE_SOURCE})
+    PACKAGE_LOCATION=$(cut -d \: -f 3 <<< ${PACKAGE_SOURCE})
+    
+    git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
+
+    if [ $PACKAGE_NAME == "OpenClash" ]; then
+        cp -aRp ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/luci-app-openclash ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/
+        rm -rf ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/
+    fi
+done
+
+# git clone -b dev --single-branch --depth 1 https://github.com/vernesong/OpenClash.git ${FIRMWARE_WORKSPACE}/OpenClash
+# cp -aRp ${FIRMWARE_WORKSPACE}/luci-app-openclash ${OPENWRT_BASE}/package/other/
 
 ./scripts/feeds install -a
 make defconfig
 make download -j$CPU_COUNT
 make -j$CPU_COUNT
-
-if [ -z $FIRMWARE_SPACE ]; then
-    FIRMWARE_SPACE=${FIRMWARE_WORKSPACE}
-fi
 
 if [ ! -d $FIRMWARE_SPACE ]; then
     mkdir -p $FIRMWARE_SPACE
@@ -172,6 +200,6 @@ for a in ${FIRMWARE_LIST[@]}; do
     i=$(($i + 1))
 done    
 
-if [ -z $GITHUB_ACTION ]; then
+if [ -z $GITHUB_ACTION ] && [ ! -z $FIRMWARE_SPACE ]; then
     cp ${FIRMWARE_WORKSPACE}/firmware/* ${FIRMWARE_SPACE}
 fi
