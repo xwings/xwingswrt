@@ -31,11 +31,7 @@ DEFAULT_SOURCE=$repo_out
 if [ -z $DEFAULT_SOURCE ]; then
     DEFAULT_SOURCE="coolsnowwolf/lede:master"
 fi
-if [ -z $thread_out ]; then
-    CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
-else
-    CPU_COUNT=$thread_out
-fi    
+CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
 REPO_NAME="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 2)"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
@@ -145,6 +141,9 @@ unset p
 ./scripts/feeds install -a
 make defconfig
 make download -j$CPU_COUNT
+if [ ! -z $thread_out ]; then
+    CPU_COUNT=$thread_out
+fi 
 make -j$CPU_COUNT
 
 if [ ! -d $FIRMWARE_SPACE ]; then
