@@ -67,8 +67,7 @@ if [ -f ${CONFIG_FILE} ]; then
 fi
 
 for p in $ADD_PACKAGES; do
-    PACKAGE_SOURCE=$p
-    PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${PACKAGE_SOURCE})
+    PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${p})
     if [ ! -z $PACKAGE_CONFIG ]; then
         if  ! grep -q "$PACKAGE_CONFIG" "$CONFIG_FILE" ; then
             echo "CONFIG_${PACKAGE_CONFIG}" >> ${CONFIG_FILE}
