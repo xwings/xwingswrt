@@ -1,5 +1,8 @@
 # 
-# 
+# Add a package name to remove from config
+# Either,
+#   i. Delete/comment from config
+#   ii. Add the package name in del.sh
 #
 
 DEL_PACKAGES="
@@ -22,5 +25,4 @@ DEL_PACKAGES="
     samba
     davfs2
     cifs
-    smb
     "

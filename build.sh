@@ -60,20 +60,23 @@ if [ ! -f ${CONFIG_FILE} ]; then
 fi
 
 if [ -f ${CONFIG_FILE} ]; then
-    echo "" >> ${CONFIG_FILE}
-    echo "# CUSTOM PACKAGES" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_luci-proto-qmi=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_kmod-mii=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_kmod-usb-wdm=y" >> ${CONFIG_FILE}
-    echo "CONFIG_PACKAGE_uqmi=y" >> ${CONFIG_FILE}
-    echo "CONFIG_LUCI_LANG_en=y" >> ${CONFIG_FILE}
-    echo "CONFIG_FAT_DEFAULT_IOCHARSET=\"utf8\"" >> ${CONFIG_FILE}
-
     for p in $DEL_PACKAGES; do
         sed -i "/${p}/d" ${CONFIG_FILE}
     done
     unset p
 fi
+
+for p in $ADD_PACKAGES; do
+    PACKAGE_SOURCE=$p
+    PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${PACKAGE_SOURCE})
+    if [ ! -z $PACKAGE_CONFIG ]; then
+        if  ! grep -q "$PACKAGE_CONFIG" "$CONFIG_FILE" ; then
+            echo "CONFIG_${PACKAGE_CONFIG}" >> ${CONFIG_FILE}
+        fi
+    fi
+
+done
+unset p
 
 cd ${BUILD_WORKSPACE}
 if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
@@ -122,8 +125,10 @@ for p in $ADD_PACKAGES; do
     PACKAGE_URL="https://github.com/$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE})"
     PACKAGE_BRANCH=$(cut -d \: -f 2 <<< ${PACKAGE_SOURCE})
     PACKAGE_LOCATION=$(cut -d \: -f 3 <<< ${PACKAGE_SOURCE})
-    
-    git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
+
+    if [ ! -z $PACKAGE_NAME ]; then
+        git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
+    fi
 
     if [ $PACKAGE_NAME == "OpenClash" ]; then
         cp -aRp ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/luci-app-openclash ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/
