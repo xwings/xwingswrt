@@ -16,6 +16,7 @@ Firmware includes :-
 
 Supported Hardware:
 - x86_64
+- GL-iNet AX1800
 
 ---
 
@@ -58,6 +59,7 @@ Build option:
 - -c : kernel config
 - -p : Firmware location, after compile (optional)
 - -r : github repo, default: coolsnowwolf/lede:master (optional)
+- -t : thread, default is use all CPU, 1 thread comes with Vs (optional)
 
 ```
 cd xwingswrt
