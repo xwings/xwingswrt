@@ -141,10 +141,13 @@ unset p
 ./scripts/feeds install -a
 make defconfig
 make download -j$CPU_COUNT
-if [ ! -z $thread_out ]; then
+if [ ! -z $thread_out ] && [ "$thread_out" != 1]; then
     CPU_COUNT=$thread_out
-fi 
-make -j$CPU_COUNT
+elif [ "$thread_out" == 1 ]
+    make -j1 V=s
+else
+    make -j$CPU_COUNT
+fi
 
 if [ ! -d $FIRMWARE_SPACE ]; then
     mkdir -p $FIRMWARE_SPACE
