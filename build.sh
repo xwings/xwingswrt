@@ -141,13 +141,19 @@ unset p
 ./scripts/feeds install -a
 make defconfig
 make download -j$CPU_COUNT
-if [ ! -z $thread_out ] && [ "$thread_out" != 1]; then
+
+if [ ! -z $thread_out ]; then
+    TOTAL_CPU=$CPU_COUNT
     CPU_COUNT=$thread_out
-elif [ "$thread_out" == 1 ]
-    make -j1 V=s
-elif [ "$thread_out" == 99 ]
+fi
+
+if [ "$CPU_COUNT" == 99 ]; then
     make package/feeds/luci/luci-base/compile V=s
-    make -j$CPU_COUNT
+    CPU_COUNT=$TOTAL_CPU
+fi
+
+if [ "$CPU_COUNT" == 1 ]; then
+    make -j1 V=s
 else
     make -j$CPU_COUNT
 fi
