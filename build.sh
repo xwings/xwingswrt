@@ -1,13 +1,15 @@
 #!/bin/bash
 
-while getopts ":c:p:r:" opt; do
+while getopts ":c:p:r:t:" opt; do
   case $opt in
     c) config_out="$OPTARG"
     ;;
     p) path_out="$OPTARG"
     ;;
     r) repo_out="$OPTARG"
-    ;;    
+    ;;
+    t) thread_out="$OPTARG"
+    ;;
     \?) echo "Invalid option -$OPTARG" >&2
     exit 1
     ;;
@@ -22,7 +24,6 @@ done
 
 KERNEL_CONFIG=$config_out
 FIRMWARE_SPACE=$path_out
-CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
 CODE_WORKSPACE="$(pwd)"
 BUILD_WORKSPACE="${CODE_WORKSPACE}/build"
 CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}"
@@ -30,6 +31,11 @@ DEFAULT_SOURCE=$repo_out
 if [ -z $DEFAULT_SOURCE ]; then
     DEFAULT_SOURCE="coolsnowwolf/lede:master"
 fi
+if [ -z $thread_out ]; then
+    CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
+else
+    CPU_COUNT=$thread_out
+fi    
 REPO_NAME="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 2)"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
@@ -129,7 +135,7 @@ for p in $ADD_PACKAGES; do
         git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
     fi
 
-    if [ $PACKAGE_NAME == "OpenClash" ]; then
+    if [ "$PACKAGE_NAME" == "OpenClash" ]; then
         cp -aRp ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/luci-app-openclash ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/
         rm -rf ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/
     fi
