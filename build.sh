@@ -144,8 +144,10 @@ make download -j$CPU_COUNT
 if [ ! -z $thread_out ] && [ "$thread_out" != 1]; then
     CPU_COUNT=$thread_out
 elif [ "$thread_out" == 1 ]
-    make package/feeds/luci/luci-base/compile V=s
     make -j1 V=s
+elif [ "$thread_out" == 99 ]
+    make package/feeds/luci/luci-base/compile V=s
+    make -j$CPU_COUNT
 else
     make -j$CPU_COUNT
 fi
