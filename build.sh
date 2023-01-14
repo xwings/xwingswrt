@@ -87,7 +87,7 @@ fi
 
 if [ "$REPO_USER" == "openwrt" ] && [ "$REPO_NAME" == "openwrt" ]; then
     git clone -b master --single-branch --depth 1 https://github.com/coolsnowwolf/lede.git lede
-    cp -aRp lede/lean ${OPENWRT_BASE}/package/
+    cp -aRp lede/package/lean ${OPENWRT_BASE}/package/
 fi
 
 if [ $KERNEL_CONFIG == "x86_64" ] && [ "$REPO_USER" == "coolsnowwolf" ] && [ "$REPO_NAME" == "lede" ]; then
