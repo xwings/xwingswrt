@@ -180,7 +180,7 @@ jobs:
     - name: Refresh API (1/2)
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
       run: |
-        wget https://api.github.com/repos/${{github.repository}}/releases/tags/${{ env.Compile_Date }} -O API
+        wget https://api.github.com/repos/${{github.repository}}/releases/tags/${{ env.CONFIG_FILE }} -O API
         
     - name: Refresh API (2/2)
       if: env.UPLOAD_RELEASES == 'true' && steps.compile.outcome == 'success' && !cancelled()
