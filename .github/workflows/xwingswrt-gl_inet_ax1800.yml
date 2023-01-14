@@ -150,7 +150,7 @@ jobs:
       id: compile
       run: |
         chmod +x ./build.sh
-        ./build.sh -c ${CONFIG_FILE} -r sdf8057/ipq6000:main -t 99
+        ./build.sh -c ${CONFIG_FILE} -r sdf8057/ipq6000:main -t 0
         [ "$?" == 0 ] && echo "Compile_Result=true" >> $GITHUB_ENV || echo "Compile_Result=false" >> $GITHUB_ENV
 
     - name: Upload Firmware to Artifacts

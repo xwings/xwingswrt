@@ -147,7 +147,7 @@ if [ ! -z $thread_out ]; then
     CPU_COUNT=$thread_out
 fi
 
-if [ "$CPU_COUNT" == 99 ]; then
+if [ "$CPU_COUNT" == 0 ]; then
     make package/feeds/luci/luci-base/compile V=s
     CPU_COUNT=$TOTAL_CPU
 fi
