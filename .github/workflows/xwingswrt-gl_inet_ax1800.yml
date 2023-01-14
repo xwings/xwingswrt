@@ -174,7 +174,7 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: build/firmware/*
         file_glob: true
-        tag: ${{ env.CONFIG_FILE }}
+        tag: ${{ env.Compile_Date }}
         overwrite: true
         
     - name: Refresh API (1/2)
@@ -189,7 +189,7 @@ jobs:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: ./API
         file_glob: true
-        tag: ${{ env.CONFIG_FILE }}
+        tag: ${{ env.Compile_Date }}
         overwrite: true
 
     - name: Delete old Workflow Runs
