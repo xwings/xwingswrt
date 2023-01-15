@@ -60,25 +60,23 @@ fi
 if [ ! -f ${CONFIG_FILE} ]; then
     echo "Config not found: ${CONFIG_FILE}"
     exit 1
-fi
-
-if [ -f ${CONFIG_FILE} ]; then
+else
     for p in $DEL_PACKAGES; do
         sed -i "/${p}/d" ${CONFIG_FILE}
     done
     unset p
-fi
 
-for p in $ADD_PACKAGES; do
-    PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${p})
-    if [ ! -z $PACKAGE_CONFIG ]; then
-        if  ! grep -q "$PACKAGE_CONFIG" "$CONFIG_FILE" ; then
-            echo "CONFIG_${PACKAGE_CONFIG}" >> ${CONFIG_FILE}
+    for p in $ADD_PACKAGES; do
+        PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${p})
+        if [ ! -z $PACKAGE_CONFIG ]; then
+            if  ! grep -q "$PACKAGE_CONFIG" "$CONFIG_FILE" ; then
+                echo "CONFIG_${PACKAGE_CONFIG}" >> ${CONFIG_FILE}
+            fi
         fi
-    fi
+    done
+    unset p
+fi    
 
-done
-unset p
 
 cd ${BUILD_WORKSPACE}
 if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
