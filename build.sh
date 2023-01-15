@@ -44,7 +44,7 @@ FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
 BUILD_DATE="$(date +%Y%m%d%H%M)"
 
-source ${CODE_WORKSPACE}/package.sh
+source ${CODE_WORKSPACE}/settings.sh
 
 if [ -z $KERNEL_CONFIG ]; then
     echo "Config [$KERNEL_CONFIG] not found, usage ./build.sh -c x86_64"
@@ -116,6 +116,7 @@ cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 make defconfig
 rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 rm -r ${FEEDS_LUCI}/luci-theme-argon*
+fn_exists() { [ `type -t $1`"" == 'function' ]; }
 
 for p in $ADD_PACKAGES; do
     PACKAGE_SOURCE=$p
@@ -123,14 +124,16 @@ for p in $ADD_PACKAGES; do
     PACKAGE_URL="https://github.com/$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE})"
     PACKAGE_BRANCH=$(cut -d \: -f 2 <<< ${PACKAGE_SOURCE})
     PACKAGE_LOCATION=$(cut -d \: -f 3 <<< ${PACKAGE_SOURCE})
+    PACKAGE_ADDON=$(cut -d \: -f 5 <<< ${PACKAGE_SOURCE})
 
     if [ ! -z $PACKAGE_NAME ]; then
         git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
     fi
-
-    if [ "$PACKAGE_NAME" == "OpenClash" ]; then
-        cp -aRp ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/luci-app-openclash ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/
-        rm -rf ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/
+    
+    if [ ! -z $PACKAGE_ADDON ]; then 
+        if fn_exists $PACKAGE_ADDON; then
+            ${PACKAGE_ADDON}
+        fi
     fi
 done
 unset p
@@ -166,13 +169,6 @@ fi
 cd ${OPENWRT_BASE}/bin/targets
 BIN_ARCH="$(find . | grep sha256sum | awk -F \/ '{print $2}')"
 BIN_MODEL="$(find . | grep sha256sum | awk -F \/ '{print $3}')"
-TARGET_FIRMWARE_END="
-                        ext4-combined.img.gz
-                        squashfs-combined.img.gz
-                        ext4-combined-efi.img.gz
-                        squashfs-combined-efi.img.gz
-                        sysupgrade.bin
-                        "
 
 for e in ${TARGET_FIRMWARE_END}; do
     TARGET_FIRMWARE="$(ls ${OPENWRT_BASE}/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*${e} 2>&-)"
