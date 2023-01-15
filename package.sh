@@ -30,23 +30,23 @@ ADD_PACKAGES="
 #
 
 DEL_PACKAGES="
-    serverchan
-    pushbot
-    docker
-    DOCKER
-    aliyundrive
-    qbittorrent
-    aria2
-    unblockmusic
-    UnblockNeteaseMusic
-    uugamebooster
-    uhttpd
-    usb-printer
-    syncdial
-    vsftpd
-    onliner
-    nfs
-    samba
-    davfs2
-    cifs
+                serverchan
+                pushbot
+                docker
+                DOCKER
+                aliyundrive
+                qbittorrent
+                aria2
+                unblockmusic
+                UnblockNeteaseMusic
+                uugamebooster
+                uhttpd
+                usb-printer
+                syncdial
+                vsftpd
+                onliner
+                nfs
+                samba
+                davfs2
+                cifs
     "
