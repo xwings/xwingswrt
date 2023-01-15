@@ -85,12 +85,7 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
 fi
 
-if [ "$REPO_USER" == "openwrt" ] && [ "$REPO_NAME" == "openwrt" ]; then
-    git clone -b master --single-branch --depth 1 https://github.com/coolsnowwolf/lede.git lede
-    cp -aRp lede/package/lean ${OPENWRT_BASE}/package/
-fi
-
-if [ $KERNEL_CONFIG == "x86_64" ] && [ "$REPO_USER" == "coolsnowwolf" ] && [ "$REPO_NAME" == "lede" ]; then
+if [ $KERNEL_CONFIG == "x86_64" ] && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
     git clone -b master --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
     rm -rf ${OPENWRT_BASE}/package/kernel/mac80211
     cp -aRp openwrt/package/kernel/mac80211 ${OPENWRT_BASE}/package/kernel/    
