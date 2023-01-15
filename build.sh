@@ -44,8 +44,7 @@ FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
 BUILD_DATE="$(date +%Y%m%d%H%M)"
 
-source ${CODE_WORKSPACE}/add.sh
-source ${CODE_WORKSPACE}/del.sh
+source ${CODE_WORKSPACE}/package.sh
 
 if [ -z $KERNEL_CONFIG ]; then
     echo "Config [$KERNEL_CONFIG] not found, usage ./build.sh -c x86_64"
