@@ -130,10 +130,8 @@ for p in $ADD_PACKAGES; do
         git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
     fi
     
-    if [ ! -z $PACKAGE_ADDON ]; then 
-        if fn_exists $PACKAGE_ADDON; then
-            ${PACKAGE_ADDON}
-        fi
+    if fn_exists $PACKAGE_ADDON; then
+        ${PACKAGE_ADDON}
     fi
 done
 unset p
