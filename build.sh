@@ -85,7 +85,7 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
 fi
 
-if [ $KERNEL_CONFIG == "x86_64" ] && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
+if grep -q "x86_64" "$CONFIG_FILE" && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
     git clone -b master --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
     rm -rf ${OPENWRT_BASE}/package/kernel/mac80211
     cp -aRp openwrt/package/kernel/mac80211 ${OPENWRT_BASE}/package/kernel/    
@@ -169,27 +169,22 @@ fi
 cd ${OPENWRT_BASE}/bin/targets
 BIN_ARCH="$(find . | grep sha256sum | awk -F \/ '{print $2}')"
 BIN_MODEL="$(find . | grep sha256sum | awk -F \/ '{print $3}')"
+TARGET_FIRMWARE_END="
+                        ext4-combined.img.gz
+                        squashfs-combined.img.gz
+                        ext4-combined-efi.img.gz
+                        squashfs-combined-efi.img.gz
+                        sysupgrade.bin
+                        "
 
-if [ $BIN_ARCH == "x86" ]; then
-    TARGET_FIRMWARE_BIOS_END="combined.img.gz"
-    TARGET_FIRMWARE_EFI_END="combined-efi.img.gz"
-    TARGET_FIRMWARE_BIOS="$(ls ${OPENWRT_BASE}/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*$TARGET_FIRMWARE_BIOS_END)" 
-    TARGET_FIRMWARE_EFI="$(ls ${OPENWRT_BASE}/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*$TARGET_FIRMWARE_EFI_END)"
-    FIRMWARE_LIST=($TARGET_FIRMWARE_BIOS $TARGET_FIRMWARE_EFI)
-    FIRMWARE_LIST_END=($TARGET_FIRMWARE_BIOS_END $TARGET_FIRMWARE_EFI_END)
-else
-    TARGET_FIRMWARE_END="sysupgrade.bin"
-    TARGET_FIRMWARE="$(ls ${OPENWRT_BASE}/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*$TARGET_FIRMWARE_END)"
-    FIRMWARE_LIST=($TARGET_FIRMWARE)
-    FIRMWARE_LIST_END=($TARGET_FIRMWARE_END)    
-fi
-
-i=0
-for a in ${FIRMWARE_LIST[@]}; do
-    SHA256_END="$(sha256sum ${FIRMWARE_LIST[$i]} | awk '{print $1}' | cut -c1-5)"
-    cp ${FIRMWARE_LIST[$i]} ${BUILD_WORKSPACE}/firmware/xwingswrt-$KERNEL_CONFIG-$BUILD_DATE-Full-$SHA256_END-${FIRMWARE_LIST_END[$i]}
-    i=$(($i + 1))
-done    
+for e in ${TARGET_FIRMWARE_END}; do
+    TARGET_FIRMWARE="$(ls ${OPENWRT_BASE}/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*${e} 2>&-)"
+    if [ ! -z $TARGET_FIRMWARE ] && [ -f $TARGET_FIRMWARE ]; then
+        SHA256_END="$(sha256sum ${TARGET_FIRMWARE} | awk '{print $1}' | cut -c1-5)"
+        cp ${TARGET_FIRMWARE} ${BUILD_WORKSPACE}/firmware/xwingswrt-$KERNEL_CONFIG-$BUILD_DATE-Full-$SHA256_END-${e}
+    fi  
+done
+unset e 
 
 if [ -z $GITHUB_ACTION ] && [ ! -z $FIRMWARE_SPACE ]; then
     cp ${BUILD_WORKSPACE}/firmware/* ${FIRMWARE_SPACE}
