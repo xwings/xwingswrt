@@ -76,7 +76,6 @@ else
     unset p
 fi    
 
-
 cd ${BUILD_WORKSPACE}
 if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
