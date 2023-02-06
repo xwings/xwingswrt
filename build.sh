@@ -42,7 +42,7 @@ UCI_BASE_CONFIG="${OPENWRT_BASE}/package/feeds/luci/luci-base/root/etc/uci-defau
 BASE_FILES="${OPENWRT_BASE}/package/base-files/files"
 FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
-BUILD_DATE="$(date +%Y%m%d%H%M)"
+BUILD_DATE="$(date +%Y%m%d)"
 
 source ${CODE_WORKSPACE}/settings.sh
 
