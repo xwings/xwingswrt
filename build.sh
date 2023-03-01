@@ -1,6 +1,6 @@
 #!/bin/bash
 
-while getopts ":c:p:r:t:b:" opt; do
+while getopts ":c:p:r:t:" opt; do
   case $opt in
     c) config_out="$OPTARG"
     ;;
@@ -9,8 +9,6 @@ while getopts ":c:p:r:t:b:" opt; do
     r) repo_out="$OPTARG"
     ;;
     t) thread_out="$OPTARG"
-    ;;
-    b) base_only="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     exit 1
@@ -119,10 +117,6 @@ make defconfig
 rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 rm -r ${FEEDS_LUCI}/luci-theme-argon*
 fn_exists() { [ `type -t $1`"" == 'function' ]; }
-
-if [ $BASEONLY != 1 ]; then
-    ADD_PACKAGES+=(${ADD_TUNNELS[@]})
-fi
 
 for p in $ADD_PACKAGES; do
     PACKAGE_SOURCE=$p

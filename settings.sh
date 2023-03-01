@@ -14,9 +14,6 @@ ADD_PACKAGES="
                 :::LUCI_LANG_en=y:
                 :::FAT_DEFAULT_IOCHARSET=\"utf8\":
                 :::PACKAGE_bash=y:
-                "
-
-ADD_TUNNELS="
                 xiaorouji/openwrt-passwall:luci:passwall-luci::
                 xiaorouji/openwrt-passwall:packages:passwall-depends::
                 pymumu/luci-app-smartdns:lede:other::
