@@ -19,6 +19,7 @@ ADD_PACKAGES="
                 pymumu/luci-app-smartdns:lede:other::
                 iwrt/luci-app-ikoolproxy:main:other::
                 fw876/helloworld:master:other::
+                vernesong/OpenClash:dev:other:PACKAGE_luci-app-openclash=y:OpenClash
 "
 # 
 # Add a package name to remove from config
