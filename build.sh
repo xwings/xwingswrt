@@ -83,7 +83,7 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
 fi
 
 if grep -q "x86_64" "$CONFIG_FILE" && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
-    git clone -b master --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
+    git clone -b main --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
     rm -rf ${OPENWRT_BASE}/package/kernel/mac80211
     cp -aRp openwrt/package/kernel/mac80211 ${OPENWRT_BASE}/package/kernel/    
 fi
