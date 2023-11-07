@@ -18,7 +18,7 @@ ADD_PACKAGES="
                 xiaorouji/openwrt-passwall:packages:passwall-depends::
                 pymumu/luci-app-smartdns:lede:other::
                 iwrt/luci-app-ikoolproxy:main:other::
-                fw876/helloworld:master:other::
+                fw876/helloworld:main:other::
                 vernesong/OpenClash:dev:other:PACKAGE_luci-app-openclash=y:OpenClash
 "
 # 
