@@ -46,6 +46,7 @@ DEL_PACKAGES="
                 samba
                 davfs2
                 cifs
+                passwall
     "
 
 TARGET_FIRMWARE_END="

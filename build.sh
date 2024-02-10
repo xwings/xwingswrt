@@ -92,6 +92,7 @@ fi
 
 cd ${OPENWRT_BASE}
 ./scripts/feeds update -a
+./scripts/feeds install -a -p ipv6
 ./scripts/feeds install -a
 
 if [ -f ${UCI_DEFAULT_CONFIG} ]; then
