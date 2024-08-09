@@ -84,11 +84,14 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
 fi
 
-#if grep -q "x86_64" "$CONFIG_FILE" && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
-#    git clone -b main --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
-#    rm -rf ${OPENWRT_BASE}/package/kernel/mac80211
-#    cp -aRp openwrt/package/kernel/mac80211 ${OPENWRT_BASE}/package/kernel/    
-#fi
+if grep -q "zyxel_ex5700" "$CONFIG_FILE" && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
+      git clone -b main --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
+      cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk
+      cp openwrt/package/boot/uboot-envtools/files/mediatek_filogic lede/package/boot/uboot-envtools/files/mediatek_filogic
+      cp openwrt/target/linux/mediatek/dts/* lede/target/linux/mediatek/dts/
+      cp openwrt/target/linux/mediatek/filogic/base-files/etc/init.d/bootcount lede/target/linux/mediatek/filogic/base-files/etc/init.d/bootcount
+      cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk 
+fi
 
 cd ${OPENWRT_BASE}
 ./scripts/feeds update -a
