@@ -91,7 +91,8 @@ if grep -q "zyxel_ex5700" "$CONFIG_FILE" && [ "$REPO_USER" != "openwrt" ] && [ "
       cp openwrt/target/linux/mediatek/dts/* lede/target/linux/mediatek/dts/
       cp ../customfiles/*.dts lede/target/linux/mediatek/dts/
       cp openwrt/target/linux/mediatek/filogic/base-files/etc/init.d/bootcount lede/target/linux/mediatek/filogic/base-files/etc/init.d/bootcount
-      cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk 
+      cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk
+      cp ../customfiles/mt7986a-ppp-down openwrt/package/network/services/ppp/files/lib/netifd/ppp-down
 fi
 
 cd ${OPENWRT_BASE}
