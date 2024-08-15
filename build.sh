@@ -84,15 +84,19 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
 fi
 
-if grep -q "zyxel_ex5700" "$CONFIG_FILE" && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
+if [ "$KERNEL_CONFIG" == "custom_zyxel_ex5700" ] && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
       git clone -b main --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
+      # deps for custom dts
       cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk
       cp openwrt/package/boot/uboot-envtools/files/mediatek_filogic lede/package/boot/uboot-envtools/files/mediatek_filogic
       cp openwrt/target/linux/mediatek/dts/* lede/target/linux/mediatek/dts/
-      cp ../customfiles/*.dts lede/target/linux/mediatek/dts/
-      cp openwrt/target/linux/mediatek/filogic/base-files/etc/init.d/bootcount lede/target/linux/mediatek/filogic/base-files/etc/init.d/bootcount
       cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk
-      cp ../customfiles/mt7986a-ppp-down openwrt/package/network/services/ppp/files/lib/netifd/ppp-down
+      # add custom dts
+      cp ../customfiles/custom_zyxel_ex5700/mt7986a-zyxel-ex5700-telenor.dts lede/target/linux/mediatek/dts/
+      # add mt7986_eeprom_mt7975_dual.bin & /mt7986_eeprom_mt7976.bin
+      sed '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7916_eeprom.bin \\' lede/package/firmware/linux-firmware/mediatek.mk > lede/package/firmware/linux-firmware/mediatek_firm.mk
+      rm lede/package/firmware/linux-firmware/mediatek.mk
+      mv lede/package/firmware/linux-firmware/mediatek_firm.mk lede/package/firmware/linux-firmware/mediatek.mk
 fi
 
 cd ${OPENWRT_BASE}
