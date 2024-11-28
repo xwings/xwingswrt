@@ -4,8 +4,7 @@
 #
 
 ADD_PACKAGES="
-                jerrykuku/luci-theme-argon:18.06:themes::
-                thinktip/luci-theme-neobird:main:themes::
+                jerrykuku/luci-theme-argon:master:themes::
                 jerrykuku/luci-app-argon-config:master:lean::
                 :::PACKAGE_luci-proto-qmi=y:
                 :::PACKAGE_kmod-mii=y:
@@ -14,16 +13,12 @@ ADD_PACKAGES="
                 :::LUCI_LANG_en=y:
                 :::FAT_DEFAULT_IOCHARSET=\"utf8\":
                 :::PACKAGE_bash=y:
-                pymumu/luci-app-smartdns:lede:other::
                 iwrt/luci-app-ikoolproxy:main:other::
                 fw876/helloworld:main:other::
                 vernesong/OpenClash:dev:other:PACKAGE_luci-app-openclash=y:OpenClash
 "
 # 
 # Add a package name to remove from config
-# Either,
-#   i. Delete/comment from config
-#   ii. Add the package name in del.sh
 #
 
 DEL_PACKAGES="
