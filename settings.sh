@@ -14,7 +14,6 @@ ADD_PACKAGES="
                 :::FAT_DEFAULT_IOCHARSET=\"utf8\":
                 :::PACKAGE_bash=y:
                 iwrt/luci-app-ikoolproxy:main:other::
-                fw876/helloworld:main:other::
                 vernesong/OpenClash:dev:other:PACKAGE_luci-app-openclash=y:OpenClash
 "
 # 
@@ -22,6 +21,7 @@ ADD_PACKAGES="
 #
 
 DEL_PACKAGES="
+                adb
                 serverchan
                 pushbot
                 docker
