@@ -47,6 +47,8 @@ FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
 BUILD_DATE="$(date +%Y%m%d)"
 BASEONLY="$base_only"
 
+fn_exists() { [ `type -t $1`"" == 'function' ]; }
+
 source ${CODE_WORKSPACE}/settings.sh
 
 if [ -z $KERNEL_CONFIG ]; then
@@ -84,19 +86,9 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
 fi
 
-if [ "$KERNEL_CONFIG" == "custom_zyxel_ex5700" ] && [ "$REPO_USER" != "openwrt" ] && [ "$REPO_NAME" != "openwrt" ]; then
-      git clone -b main --single-branch --depth 1 https://github.com/openwrt/openwrt.git openwrt
-      # deps for custom dts
-      cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk
-      cp openwrt/package/boot/uboot-envtools/files/mediatek_filogic lede/package/boot/uboot-envtools/files/mediatek_filogic
-      cp openwrt/target/linux/mediatek/dts/* lede/target/linux/mediatek/dts/
-      cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk
-      # add custom dts
-      cp ../customfiles/custom_zyxel_ex5700/mt7986a-zyxel-ex5700-telenor.dts lede/target/linux/mediatek/dts/
-      # add mt7986_eeprom_mt7975_dual.bin & /mt7986_eeprom_mt7976.bin
-      sed '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7916_eeprom.bin \\' lede/package/firmware/linux-firmware/mediatek.mk > lede/package/firmware/linux-firmware/mediatek_firm.mk
-      rm lede/package/firmware/linux-firmware/mediatek.mk
-      mv lede/package/firmware/linux-firmware/mediatek_firm.mk lede/package/firmware/linux-firmware/mediatek.mk
+if [ -f ../customfiles/$KERNEL_CONFIG/patch.sh ]; then
+    source ../customfiles/$KERNEL_CONFIG/patch.sh
+    EnablePatch
 fi
 
 cd ${OPENWRT_BASE}
@@ -105,7 +97,9 @@ cd ${OPENWRT_BASE}
 ./scripts/feeds install -a
 
 if [ -f ${UCI_DEFAULT_CONFIG} ]; then
-    sed -i 's/luci.main.lang=zh_cn/luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG} ${UCI_BASE_CONFIG}
+    if [ "$LUCI_DEFAULT_LANG" == "EN" ]; then
+        sed -i 's/luci.main.lang=zh_cn/luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG} ${UCI_BASE_CONFIG}
+    fi    
     sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
     echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
     echo "" >> ${UCI_DEFAULT_CONFIG}
@@ -128,7 +122,6 @@ cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 make defconfig
 rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
 rm -r ${FEEDS_LUCI}/luci-theme-argon*
-fn_exists() { [ `type -t $1`"" == 'function' ]; }
 
 for p in $ADD_PACKAGES; do
     PACKAGE_SOURCE=$p

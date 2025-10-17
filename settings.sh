@@ -3,6 +3,7 @@
 # users/repo:branch:openwrt_package_location:kernel_config_options:additiona_post_git_function
 #
 
+LUCI_DEFAULT_LANG="EN"
 ADD_PACKAGES="
                 jerrykuku/luci-theme-argon:master:themes::
                 jerrykuku/luci-app-argon-config:master:lean::
@@ -19,7 +20,6 @@ ADD_PACKAGES="
 # 
 # Add a package name to remove from config
 #
-
 DEL_PACKAGES="
                 adb
                 serverchan
@@ -43,7 +43,6 @@ DEL_PACKAGES="
                 cifs
                 passwall
     "
-
 TARGET_FIRMWARE_END="
                         ext4-combined.img.gz
                         squashfs-combined.img.gz

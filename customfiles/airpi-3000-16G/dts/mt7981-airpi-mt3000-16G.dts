@@ -1,0 +1,61 @@
+//By Manper 20250629
+
+/dts-v1/;
+
+#include "mt7981-airpi-3000-16G.dtsi"
+
+/ {
+	model = "AIRPI-3000-16G";
+
+	aliases {
+		led-boot = &WIFI5;
+		led-failsafe = &WIFI5;
+		led-running = &WIFI5;
+		led-upgrade = &WIFI5;
+	};
+
+	fan: pwm-fan {
+		compatible = "pwm-fan";
+		cooling-min-state = <0>;
+		cooling-max-state = <3>;
+		#cooling-cells = <2>;
+		pwms = <&pwm 2 10000 0>;
+		pinctrl-names = "default";
+		cooling-levels = <64 128 192 255>;
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		SYS {
+			label = "de:pink:sys";
+			gpios = <&pio 13 GPIO_ACTIVE_LOW>;
+		};
+
+		WIFI2 {
+			label = "de:pink:wifi2";
+			gpios = <&pio 34 GPIO_ACTIVE_LOW>;
+		};
+
+		WIFI5:de {
+			label = "de:pink:wifi5";
+			gpios = <&pio 35 GPIO_ACTIVE_LOW>;
+		};
+
+	};
+};
+
+&pio {
+	pwm0_pin: pwm0-pin-g0 {
+		mux {
+			function = "pwm";
+			groups = "pwm2";
+		};
+	};
+};
+
+&pwm {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm0_pin>;
+	status = "okay";
+};
