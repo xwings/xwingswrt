@@ -1,3 +1,5 @@
+/dts-v1/;
+
 #include "mt7981.dtsi"
 
 / {
@@ -21,6 +23,7 @@
   		};
 	};
 };
+
 
 &uart0 {
 	status = "okay";

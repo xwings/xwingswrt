@@ -2,7 +2,7 @@
 
 /dts-v1/;
 
-#include "mt7981-airpi-3000-16G.dtsi"
+#include "mt7981b-airpi-3000-16G.dtsi"
 
 / {
 	model = "AIRPI-3000-16G";

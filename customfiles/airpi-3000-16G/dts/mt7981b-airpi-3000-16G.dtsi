@@ -1,7 +1,7 @@
-#include "mt7981-airpi-3000-16G-common.dtsi"
+#include "mt7981b-airpi-3000-16G-common.dtsi"
 
 / {
-	compatible = "7981-Airpi-emmc", "mediatek,mt7981-emmc-rfb";
+	compatible = "7981-airpi-3000", "mediatek,mt7981-emmc-rfb";
 	chosen {
 		bootargs = "console=ttyS0,115200n1 rootwait loglevel=8  \
 				earlycon=uart8250,mmio32,0x11002000 \
@@ -10,6 +10,13 @@
 	memory {
 		// fpga ddr4: 1GB
 		reg = <0 0x40000000 0 0x40000000>;
+	};
+	hnat: hnat@15000000 {
+		compatible = "mediatek,mtk-hnat_v4";
+		reg = <0 0x15100000 0 0x80000>;
+		resets = <&ethsys 0>;
+		reset-names = "mtketh";
+		status = "disabled";
 	};
 };
 
@@ -93,9 +100,6 @@
 			nvmem-cells = <&phy_calibration>;
 			nvmem-cell-names = "phy-cal-data";
 		};
-
-		
-
 	};
 };
 

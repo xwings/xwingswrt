@@ -4,6 +4,9 @@
 #
 
 LUCI_DEFAULT_LANG="EN"
+#CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l) / 2"
+CPU_COUNT=4
+
 ADD_PACKAGES="
                 jerrykuku/luci-theme-argon:master:themes::
                 jerrykuku/luci-app-argon-config:master:lean::
@@ -17,6 +20,7 @@ ADD_PACKAGES="
                 iwrt/luci-app-ikoolproxy:main:other::
                 vernesong/OpenClash:dev:other:PACKAGE_luci-app-openclash=y:OpenClash
 "
+
 # 
 # Add a package name to remove from config
 #
@@ -43,6 +47,7 @@ DEL_PACKAGES="
                 cifs
                 passwall
     "
+
 TARGET_FIRMWARE_END="
                         ext4-combined.img.gz
                         squashfs-combined.img.gz

@@ -30,10 +30,15 @@ CODE_WORKSPACE="$(pwd)"
 BUILD_WORKSPACE="${CODE_WORKSPACE}/build"
 CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}"
 DEFAULT_SOURCE=$repo_out
+
 if [ -z $DEFAULT_SOURCE ]; then
     DEFAULT_SOURCE="coolsnowwolf/lede:master"
 fi
-CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
+
+if [ -z $CPU_COUNT ]; then
+    CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
+fi    
+
 REPO_NAME="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 2)"
 REPO_USER="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 1)"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
@@ -146,19 +151,13 @@ make defconfig
 make download -j$CPU_COUNT
 
 if [ ! -z $thread_out ]; then
-    TOTAL_CPU=$CPU_COUNT
     CPU_COUNT=$thread_out
-fi
-
-if [ "$CPU_COUNT" == 0 ]; then
-    make package/feeds/luci/luci-base/compile V=s
-    CPU_COUNT=$TOTAL_CPU
 fi
 
 if [ "$CPU_COUNT" == 1 ]; then
     make -j1 V=s
 else
-    make -j$CPU_COUNT
+    make -j$CPU_COUNT V=s
 fi
 
 if [ ! -d $FIRMWARE_SPACE ]; then
