@@ -48,7 +48,8 @@ DEL_PACKAGES="
                 passwall
     "
 
-TARGET_FIRMWARE_END="
+TARGET_FIRMWARE_END="   
+                        initramfs-kernel.bin
                         ext4-combined.img.gz
                         squashfs-combined.img.gz
                         ext4-combined-efi.img.gz
