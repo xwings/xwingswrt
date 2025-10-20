@@ -48,6 +48,16 @@
 		};
 	};
 
+	fan: pwm-fan {
+		compatible = "pwm-fan";
+		cooling-min-state = <0>;
+		cooling-max-state = <3>;
+		#cooling-cells = <2>;
+		pwms = <&pwm 2 10000 0>;
+		pinctrl-names = "default";
+		cooling-levels = <64 128 192 255>;
+	};
+
 	gpio-leds {
 		compatible = "gpio-leds";
 
