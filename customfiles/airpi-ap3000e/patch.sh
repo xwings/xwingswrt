@@ -7,7 +7,7 @@ define Device/airpi-ap3000e
     DEVICE_MODEL := Airpi-AP3000E
     DEVICE_DTS := mt7981b-airpi-ap3000e
     DEVICE_DTS_DIR := ../dts
-    DEVICE_PACKAGES := kmod-mt7915e kmod-mt7981-firmware mt7981-wo-firmware mt7986-wo-firmware mt7986-firmware kmod-hwmon-pwmfan kmod-usb3 f2fsck mkf2fs
+    DEVICE_PACKAGES :=kmod-mt7981-firmware mt7981-wo-firmware mt7986-wo-firmware mt7986-firmware kmod-usb3 f2fsck mkf2fs
     UBINIZE_OPTS := -E 5
     BLOCKSIZE := 128k
     PAGESIZE := 2048
@@ -23,6 +23,11 @@ TARGET_DEVICES += airpi-ap3000e
     sed -i '/mt7986-wo-firmware\/install/a \\tcp $(PKG_BUILD_DIR)\/mediatek/mt7986_eeprom_mt7976_dbdc.bin $(PKG_BUILD_DIR)\/mediatek\/mt7981_eeprom_mt7976_dbdc.bin' lede/package/firmware/linux-firmware/mediatek.mk
     sed -i '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7986_eeprom_mt7976_dbdc.bin \\' lede/package/firmware/linux-firmware/mediatek.mk
     sed -i '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7981_eeprom_mt7976_dbdc.bin \\' lede/package/firmware/linux-firmware/mediatek.mk
+
+    # Fan module
+    cp -aR ../customfiles/airpi-ap3000e/Airpi-gpio-fan lede/package/kernel/
+    cp -aR ../customfiles/airpi-ap3000e/luci-app-Airpifanctrl lede/package/other/
+
 }
 
 sed -i '/pattern/a bananapi,bpi-r3|\' inputfile

@@ -1,12 +1,12 @@
 #
-# How to use this file:
-# users/repo:branch:openwrt_package_location:kernel_config_options:additiona_post_git_function
+# settings.sh
 #
 
 LUCI_DEFAULT_LANG="EN"
 #CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l) / 2"
 CPU_COUNT=4
 
+# users/repo:branch:openwrt_package_location:kernel_config_options:additiona_post_git_function
 ADD_PACKAGES="
                 jerrykuku/luci-theme-argon:master:themes::
                 jerrykuku/luci-app-argon-config:master:lean::
