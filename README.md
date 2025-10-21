@@ -16,7 +16,9 @@ Firmware includes :-
 
 Supported Hardware:
 - x86_64
+- Airpi AP3000M
 - GL-iNet AX1800
+- GL-iNet MT3000
 
 ---
 
@@ -61,6 +63,12 @@ Build option:
 - -r : github repo, default: coolsnowwolf/lede:master (optional)
 - -t : thread, default is use all CPU, 1 thread comes with Vs (optional)
 
+Simple build
+```
+cd xwingswrt
+./build.sh -c x86_64
+```
+
 With Tunneling Plugins (x86_64 as example)
 ```
 cd xwingswrt
@@ -73,13 +81,13 @@ cd xwingswrt
 ./build.sh -c gl_inet_ax1800 -r sdf8057/ipq6000:main -t 0 -p /path/to/save/firmware -b 1
 ```
 
+#### Login information
+
+Via http://192.168.1.1
+```
 Username: root
 Password: password
-
----
-#### Download:
-
-Pre-compiled firmware is also avilable at https://github.com/xwings/xwingswrt/releases
+```
 
 ---
 
