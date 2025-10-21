@@ -28,7 +28,7 @@ KERNEL_CONFIG=$config_out
 FIRMWARE_SPACE=$path_out
 CODE_WORKSPACE="$(pwd)"
 BUILD_WORKSPACE="${CODE_WORKSPACE}/build"
-CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}"
+CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/${KERNEL_CONFIG}"
 DEFAULT_SOURCE=$repo_out
 
 if [ -z $DEFAULT_SOURCE ]; then
@@ -63,7 +63,7 @@ fi
 
 if [ ! -d ${BUILD_WORKSPACE}/config ]; then
     mkdir -p ${BUILD_WORKSPACE}/config
-    cp ${CODE_WORKSPACE}/config/*  ${BUILD_WORKSPACE}/config
+    cp -aRp ${CODE_WORKSPACE}/config/*  ${BUILD_WORKSPACE}/config
 fi
 
 if [ ! -f ${CONFIG_FILE} ]; then
@@ -91,8 +91,8 @@ if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
     git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
 fi
 
-if [ -f ../customfiles/$KERNEL_CONFIG/patch.sh ]; then
-    source ../customfiles/$KERNEL_CONFIG/patch.sh
+if [ -f ../config/$KERNEL_CONFIG/patch.sh ]; then
+    source ../config/$KERNEL_CONFIG/patch.sh
     EnablePatch
 fi
 
@@ -120,7 +120,7 @@ EOF
     echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
 fi
 
-cp ${CODE_WORKSPACE}/customfiles/depends/banner ${BASE_FILES}/etc
+cp ${CODE_WORKSPACE}/config/depends/banner ${BASE_FILES}/etc
 sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
 sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
 cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config

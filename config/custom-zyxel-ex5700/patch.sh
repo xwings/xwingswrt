@@ -7,10 +7,8 @@ EnablePatch() {
         cp openwrt/target/linux/mediatek/dts/* lede/target/linux/mediatek/dts/
         cp openwrt/target/linux/mediatek/image/filogic.mk lede/target/linux/mediatek/image/filogic.mk
         # add custom dts
-        cp ../customfiles/custom_zyxel_ex5700/dts/* lede/target/linux/mediatek/dts/
+        cp ../config/custom_zyxel_ex5700/dts/* lede/target/linux/mediatek/dts/
         # add mt7986_eeprom_mt7975_dual.bin & /mt7986_eeprom_mt7976.bin
-        sed '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7916_eeprom.bin \\' lede/package/firmware/linux-firmware/mediatek.mk > lede/package/firmware/linux-firmware/mediatek_firm.mk
-        rm lede/package/firmware/linux-firmware/mediatek.mk
-        mv lede/package/firmware/linux-firmware/mediatek_firm.mk lede/package/firmware/linux-firmware/mediatek.mk
+        sed -i '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7916_eeprom.bin \\' lede/package/firmware/linux-firmware/mediatek.mk
     fi
 }

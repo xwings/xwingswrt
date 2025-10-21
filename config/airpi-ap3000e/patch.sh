@@ -1,5 +1,5 @@
 EnablePatch() {
-    cp ../customfiles/airpi-ap3000e/dts/* lede/target/linux/mediatek/dts/
+    cp ../config/airpi-ap3000e/dts/* lede/target/linux/mediatek/dts/
     echo "" >> lede/target/linux/mediatek/image/filogic.mk
     echo "
 define Device/airpi-ap3000e
@@ -25,9 +25,7 @@ TARGET_DEVICES += airpi-ap3000e
     sed -i '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7981_eeprom_mt7976_dbdc.bin \\' lede/package/firmware/linux-firmware/mediatek.mk
 
     # Fan module
-    cp -aR ../customfiles/airpi-ap3000e/Airpi-gpio-fan lede/package/kernel/
-    cp -aR ../customfiles/airpi-ap3000e/luci-app-Airpifanctrl lede/package/other/
+    cp -aR ../config/airpi-ap3000e/Airpi-gpio-fan lede/package/kernel/
+    cp -aR ../config/airpi-ap3000e/luci-app-Airpifanctrl lede/package/other/
 
 }
-
-sed -i '/pattern/a bananapi,bpi-r3|\' inputfile
