@@ -1,5 +1,8 @@
 EnablePatch() {
+    # preparing files
     cp ../config/airpi-ap3000e/dts/* lede/target/linux/mediatek/dts/
+    cp -aR ../config/airpi-ap3000e/Airpi-gpio-fan lede/package/kernel/
+    cp -aR ../config/airpi-ap3000e/luci-app-Airpifanctrl lede/package/other/    
     echo "" >> lede/target/linux/mediatek/image/filogic.mk
     echo "
 define Device/airpi-ap3000e
@@ -20,12 +23,6 @@ TARGET_DEVICES += airpi-ap3000e
     sed -i '/glinet,gl-mt3000/i \\tairpi,ap3000e|\\' lede/target/linux/mediatek/filogic/base-files/etc/board.d/02_network
     sed -i '/glinet,gl-mt6000|\\/i \\tairpi,ap3000e|\\' lede/target/linux/mediatek/filogic/base-files/lib/upgrade/platform.sh
     sed -i '/glinet,gl-mt6000|\\/i \\tairpi,ap3000e)\n\t\taddr=$(macaddr_generate_from_mmc_cid mmcblk0)\n\t\t[ "$PHYNBR" = "0" ] && macaddr_add $addr 2 > /sys${DEVPATH}/macaddress\n\t\t[ "$PHYNBR" = "1" ] && macaddr_add $addr 3 > /sys${DEVPATH}/macaddress\n\t\t;;' lede/target/linux/mediatek/filogic/base-files/etc/hotplug.d/ieee80211/11_fix_wifi_mac
-    sed -i '/mt7986-wo-firmware\/install/a \\tcp $(PKG_BUILD_DIR)\/mediatek/mt7986_eeprom_mt7976_dbdc.bin $(PKG_BUILD_DIR)\/mediatek\/mt7981_eeprom_mt7976_dbdc.bin' lede/package/firmware/linux-firmware/mediatek.mk
-    sed -i '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7986_eeprom_mt7976_dbdc.bin \\' lede/package/firmware/linux-firmware/mediatek.mk
-    sed -i '/mt7986_wo_1.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7981_eeprom_mt7976_dbdc.bin \\' lede/package/firmware/linux-firmware/mediatek.mk
-
-    # Fan module
-    cp -aR ../config/airpi-ap3000e/Airpi-gpio-fan lede/package/kernel/
-    cp -aR ../config/airpi-ap3000e/luci-app-Airpifanctrl lede/package/other/
-
+    sed -i '/mt7981-wo-firmware\/install/a \\tcp $(BUILD_DIR)/../../../config/airpi-ap3000e/firmware/mt7981_eeprom_mt7976_dbdc.bin $(PKG_BUILD_DIR)/mediatek\/mt7981_eeprom_mt7976_dbdc.bin' lede/package/firmware/linux-firmware/mediatek.mk
+    sed -i '/mt7981_wo.bin/a \\t\t$(PKG_BUILD_DIR)/mediatek/mt7981_eeprom_mt7976_dbdc.bin \\' lede/package/firmware/linux-firmware/mediatek.mk
 }
