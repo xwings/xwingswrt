@@ -2,7 +2,7 @@
 # settings.sh
 #
 
-LUCI_DEFAULT_LANG="EN"
+LUCI_DEFAULT_LANG="en"
 #CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l) / 2"
 CPU_COUNT=4
 

@@ -53,6 +53,7 @@ FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
 BUILD_DATE="$(date +%Y%m%d)"
 BASEONLY="$base_only"
+LUCI_DEFAULT_LANG="$(echo $LUCI_DEFAULT_LANG | awk '{print tolower($0)}')"
 
 fn_exists() { [ `type -t $1`"" == 'function' ]; }
 
@@ -102,8 +103,8 @@ cd ${OPENWRT_BASE}
 ./scripts/feeds install -a
 
 if [ -f ${UCI_DEFAULT_CONFIG} ]; then
-    if [ "$LUCI_DEFAULT_LANG" == "EN" ]; then
-        sed -i 's/luci.main.lang=zh_cn/luci.main.lang=en/g' ${UCI_DEFAULT_CONFIG} ${UCI_BASE_CONFIG}
+    if [ ! -z "$LUCI_DEFAULT_LANG" ]; then
+        sed -i "s/luci.main.lang=zh_cn/luci.main.lang=$LUCI_DEFAULT_LANG/g" ${UCI_DEFAULT_CONFIG} ${UCI_BASE_CONFIG}
     fi    
     sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
     echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
