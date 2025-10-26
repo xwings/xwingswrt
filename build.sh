@@ -1,12 +1,10 @@
-#!/bin/bash
+#!/bin/bash -e
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib
 
-while getopts ":c:p:r:d:" opt; do
+while getopts ":c:r:d:" opt; do
   case $opt in
     c) config_out="$OPTARG"
-    ;;
-    p) path_out="$OPTARG"
     ;;
     r) repo_out="$OPTARG"
     ;;
@@ -24,10 +22,7 @@ while getopts ":c:p:r:d:" opt; do
   esac
 done
 
-source ${CODE_WORKSPACE}/settings.sh
-
 KERNEL_CONFIG=$config_out
-FIRMWARE_SPACE=$path_out
 CODE_WORKSPACE="$(pwd)"
 BUILD_WORKSPACE="${CODE_WORKSPACE}/build"
 CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/${KERNEL_CONFIG}"
@@ -55,6 +50,7 @@ BUILD_DATE="$(date +%Y%m%d)"
 BASEONLY="$base_only"
 LUCI_DEFAULT_LANG="$(echo $LUCI_DEFAULT_LANG | awk '{print tolower($0)}')"
 
+source ${CODE_WORKSPACE}/settings.sh
 fn_exists() { [ `type -t $1`"" == 'function' ]; }
 
 if [ -z $KERNEL_CONFIG ]; then
@@ -104,7 +100,7 @@ cd ${OPENWRT_BASE}
 
 if [ -f ${UCI_DEFAULT_CONFIG} ]; then
     if [ ! -z "$LUCI_DEFAULT_LANG" ]; then
-        sed -i "s/luci.main.lang=zh_cn/luci.main.lang=$LUCI_DEFAULT_LANG/g" ${UCI_DEFAULT_CONFIG} ${UCI_BASE_CONFIG}
+        sed -i "s/luci.main.lang=zh_cn/luci.main.lang=$LUCI_DEFAULT_LANG/g" ${UCI_DEFAULT_CONFIG}
     fi    
     sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
     echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
@@ -157,10 +153,6 @@ else
     make -j$CPU_COUNT V=s
 fi
 
-if [ ! -d $FIRMWARE_SPACE ]; then
-    mkdir -p $FIRMWARE_SPACE
-fi
-
 if [ ! -d ${BUILD_WORKSPACE}/firmware ]; then
     mkdir -p ${BUILD_WORKSPACE}/firmware
 fi
@@ -177,7 +169,3 @@ for e in ${TARGET_FIRMWARE_END}; do
     fi  
 done
 unset e 
-
-if [ -z $GITHUB_ACTION ] && [ ! -z $FIRMWARE_SPACE ]; then
-    cp ${BUILD_WORKSPACE}/firmware/* ${FIRMWARE_SPACE}
-fi
