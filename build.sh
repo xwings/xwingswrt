@@ -2,7 +2,7 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib
 
-while getopts ":c:p:r:t:" opt; do
+while getopts ":c:p:r:d:" opt; do
   case $opt in
     c) config_out="$OPTARG"
     ;;
