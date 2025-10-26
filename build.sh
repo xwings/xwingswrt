@@ -10,7 +10,7 @@ while getopts ":c:p:r:t:" opt; do
     ;;
     r) repo_out="$OPTARG"
     ;;
-    t) thread_out="$OPTARG"
+    d) debug_out="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     exit 1
@@ -23,6 +23,8 @@ while getopts ":c:p:r:t:" opt; do
     ;;
   esac
 done
+
+source ${CODE_WORKSPACE}/settings.sh
 
 KERNEL_CONFIG=$config_out
 FIRMWARE_SPACE=$path_out
@@ -53,8 +55,6 @@ BUILD_DATE="$(date +%Y%m%d)"
 BASEONLY="$base_only"
 
 fn_exists() { [ `type -t $1`"" == 'function' ]; }
-
-source ${CODE_WORKSPACE}/settings.sh
 
 if [ -z $KERNEL_CONFIG ]; then
     echo "Config [$KERNEL_CONFIG] not found, usage ./build.sh -c x86_64"
@@ -150,12 +150,8 @@ unset p
 make defconfig
 make download -j$CPU_COUNT
 
-if [ ! -z $thread_out ]; then
-    CPU_COUNT=$thread_out
-fi
-
-if [ "$CPU_COUNT" == 1 ]; then
-    make -j1 V=s
+if [ "$debug_out" == 1 ]; then
+    make -j1 V=sc
 else
     make -j$CPU_COUNT V=s
 fi
