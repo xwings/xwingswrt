@@ -164,7 +164,7 @@ BIN_MODEL="$(find . | grep sha256sum | awk -F \/ '{print $3}')"
 
 for e in ${TARGET_FIRMWARE_END}; do
     TARGET_FIRMWARE="$(ls ${OPENWRT_BASE}/bin/targets/$BIN_ARCH/$BIN_MODEL/openwrt-$BIN_ARCH-$BIN_MODEL*${e} 2>&1 || true)"
-    if [ ! -z $TARGET_FIRMWARE ] && [ -f $TARGET_FIRMWARE ]; then
+    if [ ! -z "$TARGET_FIRMWARE" ] && [ -f "$TARGET_FIRMWARE" ]; then
         echo "Found $TARGET_FIRMWARE"
         SHA256_END="$(sha256sum ${TARGET_FIRMWARE} | awk '{print $1}' | cut -c1-5)"
         cp ${TARGET_FIRMWARE} ${BUILD_WORKSPACE}/firmware/xwingswrt-$KERNEL_CONFIG-$BUILD_DATE-Full-$SHA256_END-${e}

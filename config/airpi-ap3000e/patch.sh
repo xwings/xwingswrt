@@ -8,7 +8,7 @@ define Device/airpi-ap3000e
     DEVICE_MODEL := Airpi-AP3000E
     DEVICE_DTS := mt7981b-airpi-ap3000e
     DEVICE_DTS_DIR := ../dts
-    DEVICE_PACKAGES :=kmod-mt7981-firmware mt7981-wo-firmware mt7986-wo-firmware mt7986-firmware kmod-usb3 f2fsck mkf2fs
+    DEVICE_PACKAGES :=kmod-mt7981-firmware mt7981-wo-firmware kmod-usb3 f2fsck mkf2fs
     UBINIZE_OPTS := -E 5
     BLOCKSIZE := 128k
     PAGESIZE := 2048
