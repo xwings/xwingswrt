@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib
 
@@ -26,15 +26,12 @@ KERNEL_CONFIG=$config_out
 CODE_WORKSPACE="$(pwd)"
 BUILD_WORKSPACE="${CODE_WORKSPACE}/build"
 CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/${KERNEL_CONFIG}"
-DEFAULT_SOURCE=$repo_out
 
-if [ -z $DEFAULT_SOURCE ]; then
-    DEFAULT_SOURCE="coolsnowwolf/lede:master"
+source ${CODE_WORKSPACE}/settings.sh
+
+if [ ! -z $repo_out ]; then
+    DEFAULT_SOURCE=$repo_out
 fi
-
-if [ -z $CPU_COUNT ]; then
-    CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
-fi    
 
 REPO_NAME="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 2)"
 REPO_USER="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 1)"
@@ -50,7 +47,6 @@ BUILD_DATE="$(date +%Y%m%d)"
 BASEONLY="$base_only"
 LUCI_DEFAULT_LANG="$(echo $LUCI_DEFAULT_LANG | awk '{print tolower($0)}')"
 
-source ${CODE_WORKSPACE}/settings.sh
 fn_exists() { [ `type -t $1`"" == 'function' ]; }
 
 if [ -z $KERNEL_CONFIG ]; then
@@ -124,7 +120,7 @@ EOF
     cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
     make defconfig
     rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
-    rm -r ${FEEDS_LUCI}/luci-theme-argon*
+    rm -r ${FEEDS_LUCI}/luci-theme-argon* 2>&1 || true
 
     for p in $ADD_PACKAGES; do
         PACKAGE_SOURCE=$p
