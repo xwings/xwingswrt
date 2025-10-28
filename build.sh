@@ -58,6 +58,7 @@ if [ ! -d ${OPENWRT_BASE}/bin/targets ]; then
     if [ ! -d ${BUILD_WORKSPACE}/config ]; then
         mkdir -p ${BUILD_WORKSPACE}/config
         cp -aRp ${CODE_WORKSPACE}/config/*  ${BUILD_WORKSPACE}/config
+        cat ${BUILD_WORKSPACE}/config/depends/general_config >> $CONFIG_FILE
     fi
 
     if [ ! -f ${CONFIG_FILE} ]; then
