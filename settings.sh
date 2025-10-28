@@ -22,7 +22,6 @@ ADD_PACKAGES="
                 :::LUCI_LANG_en=y:
                 :::FAT_DEFAULT_IOCHARSET=\"utf8\":
                 :::PACKAGE_bash=y:
-                iwrt/luci-app-ikoolproxy:main:other::
                 vernesong/OpenClash:dev:other:PACKAGE_luci-app-openclash=y:OpenClash
 "
 
@@ -41,7 +40,6 @@ DEL_PACKAGES="
                 unblockmusic
                 UnblockNeteaseMusic
                 uugamebooster
-                uhttpd
                 usb-printer
                 syncdial
                 vsftpd
