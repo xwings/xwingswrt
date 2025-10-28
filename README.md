@@ -2,31 +2,23 @@
 
 ---
 
-Customized OpenWRT firmware, build for national level harden Internet acess. LANG=EN mostly.
+Customized OpenWRT firmware, build for national level harden Internet access. LANG=EN mostly.
 
 Firmware includes :-
 - Linux Kernel 6.x
-- Latest OpenWrt
-- Xray / V2Ray
-- ShadowSocksR Plus+
+- Latest OpenWrt (Vanilla)
 - OpenClash
-- AdGuard
-- WireGuard
-- ZeroTier
+- Argon Theme
+- Bash Shell
+- USB Modem Support (QMI)
 
 Supported Hardware:
 - x86_64
-- Airpi AP3000M
+- Airpi AP3000E
 - GL-iNet AX1800
 - GL-iNet MT3000
-
----
-
-#### How To Setup:
-
-- [How to Install Proxmox 7.3 - The Complete Guide](https://www.youtube.com/watch?v=6NfZ1R6jrXQ)
-- [Run an OpenWRT VM on Proxmox VE](https://www.youtube.com/watch?v=_fh7tnQW034)
-- [Install V2Ray Client on OpenWRT and Configure Vmess](https://www.youtube.com/watch?v=o7PC57_2734)
+- GL-iNet MT6000
+- Zyxel EX5700 (Custom)
 
 ---
 
@@ -42,7 +34,7 @@ Supported Hardware:
 
 #### How To Build:
 
-Build Enviroment (Debian 11/bullseye):
+Build Enviroment (Debian 11/12):
 ```
 sudo apt install -y ack antlr3 aria2 asciidoc autoconf automake autopoint binutils bison build-essential \
 bzip2 ccache cmake cpio curl device-tree-compiler fastjar flex gawk gettext gcc-multilib g++-multilib \
@@ -57,16 +49,33 @@ Clone:
 git clone https://github.com/xwings/xwingswrt.git
 ```
 
-Build option:
-- -c : kernel config
-- -p : Firmware location, after compile (optional)
-- -r : github repo, default: coolsnowwolf/lede:master (optional)
-- -t : thread, default is use all CPU, 1 thread comes with Vs (optional)
+Configuration:
+Edit `settings.sh` to customize build settings:
+- `CPU_COUNT`: Number of CPU cores to use for compilation (default: 4)
+- `DEFAULT_SOURCE`: Default OpenWRT repository (default: openwrt/openwrt)
+- `LUCI_DEFAULT_LANG`: Default LuCI language (default: en)
+- `ADD_PACKAGES`: Additional packages to include in firmware
+- `DEL_PACKAGES`: Packages to exclude from firmware
 
-Simple build
+Build options:
+- -c : Config name (required) - e.g., x86_64, airpi-ap3000e, gl-inet-ax1800, gl-inet-mt3000, gl-inet-mt6000, custom-zyxel-ex5700
+- -r : GitHub repo (optional) - default: openwrt/openwrt (format: user/repo:branch)
+- -d : Debug mode (optional) - set to 1 for verbose single-threaded build (make -j1 V=sc)
+
+Simple build:
 ```
 cd xwingswrt
 ./build.sh -c x86_64
+```
+
+Build with custom repository:
+```
+./build.sh -c x86_64 -r coolsnowwolf/lede:master
+```
+
+Debug build:
+```
+./build.sh -c x86_64 -d 1
 ```
 
 #### Login information
@@ -77,9 +86,17 @@ Username: root
 Password: password
 ```
 
+#### How To Setup x86_64:
+
+- [How to Install Proxmox 7.3 - The Complete Guide](https://www.youtube.com/watch?v=6NfZ1R6jrXQ)
+- [Run an OpenWRT VM on Proxmox VE](https://www.youtube.com/watch?v=_fh7tnQW034)
+
 ---
 
 #### Credits:
-- https://openwrt.org/
-- https://github.com/coolsnowwolf/lede
-- https://github.com/Hyy2001X
+- https://openwrt.org/ - OpenWrt Project
+- https://github.com/coolsnowwolf/lede - Alternative OpenWrt source (optional)
+- https://github.com/Hyy2001X - AutoBuild framework
+- https://github.com/vernesong/OpenClash - OpenClash
+- https://github.com/jerrykuku/luci-theme-argon - Argon Theme
+- https://github.com/jerrykuku/luci-app-argon-config - Argon Config
