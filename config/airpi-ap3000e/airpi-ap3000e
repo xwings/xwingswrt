@@ -8,15 +8,16 @@ CONFIG_PACKAGE_luci-app-Airpifanctrl=y
 
 CONFIG_TESTING_KERNEL=y
 
-#
 # Boot Loaders
-#
-# CONFIG_PACKAGE_fconfig is not set
 CONFIG_PACKAGE_uboot-envtools=y
-# end of Boot Loaders
+# CONFIG_PACKAGE_fconfig is not set
 
+# Network
+CONFIG_PACKAGE_kmod-mac80211=y
+CONFIG_PACKAGE_dnsmasq-full=y
+# CONFIG_PACKAGE_dnsmasq is not set
 
-# IPv6 支持
+# IPv6 support
 CONFIG_IPV6=y
 CONFIG_KERNEL_IPV6=y
 CONFIG_PACKAGE_ipv6helper=y
@@ -25,19 +26,17 @@ CONFIG_PACKAGE_6in4=y
 CONFIG_PACKAGE_6rd=y
 CONFIG_PACKAGE_6to4=y
 
-# 内核模块
+# Kernel module
 CONFIG_PACKAGE_kmod-fs-cifs=y
 CONFIG_PACKAGE_kmod-fs-nfs-v3=y
 CONFIG_PACKAGE_kmod-fs-nfs-v4=y
 
-# USB 相关
+# USB
 CONFIG_PACKAGE_automount=y
 CONFIG_PACKAGE_e2fsprogs=y
 CONFIG_PACKAGE_smartmontools=y
 CONFIG_PACKAGE_luci-app-hd-idle=y
 CONFIG_PACKAGE_luci-app-usb-printer=y
-
-## USB 网络共享
 CONFIG_PACKAGE_kmod-usb-net=y
 CONFIG_PACKAGE_kmod-usb-net-asix=y
 CONFIG_PACKAGE_kmod-usb-net-cdc-ether=y
@@ -135,7 +134,7 @@ CONFIG_PACKAGE_xray-core=y
 # CONFIG_PACKAGE_shadowsocks-rust-ssservice is not set
 # CONFIG_PACKAGE_shadowsocks-rust-ssurl is not set
 
-# 主题包
+# Theme
 # CONFIG_PACKAGE_luci-theme-argon is not set
 CONFIG_PACKAGE_luci-theme-argon-mod=y
 

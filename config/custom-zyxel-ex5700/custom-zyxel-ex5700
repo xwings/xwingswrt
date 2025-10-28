@@ -12,7 +12,7 @@ CONFIG_PACKAGE_uboot-envtools=y
 # end of Boot Loaders
 
 
-# IPv6 支持
+# IPv6 support
 CONFIG_IPV6=y
 CONFIG_KERNEL_IPV6=y
 CONFIG_PACKAGE_ipv6helper=y
@@ -21,19 +21,19 @@ CONFIG_PACKAGE_6in4=y
 CONFIG_PACKAGE_6rd=y
 CONFIG_PACKAGE_6to4=y
 
-# 内核模块
+# Kernel module
 CONFIG_PACKAGE_kmod-fs-cifs=y
 CONFIG_PACKAGE_kmod-fs-nfs-v3=y
 CONFIG_PACKAGE_kmod-fs-nfs-v4=y
 
-# USB 相关
+# USB
 CONFIG_PACKAGE_automount=y
 CONFIG_PACKAGE_e2fsprogs=y
 CONFIG_PACKAGE_smartmontools=y
 CONFIG_PACKAGE_luci-app-hd-idle=y
 CONFIG_PACKAGE_luci-app-usb-printer=y
 
-## USB 网络共享
+## USB
 CONFIG_PACKAGE_kmod-usb-net=y
 CONFIG_PACKAGE_kmod-usb-net-asix=y
 CONFIG_PACKAGE_kmod-usb-net-cdc-ether=y
@@ -44,6 +44,10 @@ CONFIG_PACKAGE_kmod-usb-net-ipheth=y
 CONFIG_PACKAGE_kmod-usb-net-rndis=y
 CONFIG_PACKAGE_libudev-fbsd=y
 CONFIG_PACKAGE_usbutils=y
+
+# GPIO Fan
+CONFIG_PACKAGE_kmod-hwmon-pwmfan=y
+CONFIG_PACKAGE_kmod-hwmon-gpiofan=y
 
 # LUCI Appliciations
 CONFIG_PACKAGE_luci-app-accesscontrol=y
@@ -88,7 +92,7 @@ CONFIG_PACKAGE_luci-app-upnp=y
 CONFIG_PACKAGE_luci-app-webadmin=y
 CONFIG_PACKAGE_luci-app-webd=y
 CONFIG_PACKAGE_luci-app-wol=y
-CONFIG_PACKAGE_luci-app-wireguard=y
+CONFIG_PACKAGE_luci-proto-wireguard=y
 CONFIG_PACKAGE_luci-ssl-openssl=y
 CONFIG_PACKAGE_xray-core=y
 
@@ -127,7 +131,7 @@ CONFIG_PACKAGE_xray-core=y
 # CONFIG_PACKAGE_shadowsocks-rust-ssservice is not set
 # CONFIG_PACKAGE_shadowsocks-rust-ssurl is not set
 
-# 主题包
+# Theme
 # CONFIG_PACKAGE_luci-theme-argon is not set
 CONFIG_PACKAGE_luci-theme-argon-mod=y
 
@@ -155,3 +159,4 @@ CONFIG_PACKAGE_xz=y
 CONFIG_PACKAGE_xz-utils=y
 CONFIG_PACKAGE_xl2tpd=y
 CONFIG_PACKAGE_gdisk=y
+

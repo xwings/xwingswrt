@@ -2,10 +2,14 @@
 # settings.sh
 #
 
+# CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l)"
+# DEFAULT_SOURCE="openwrt/openwrt:openwrt-24.10"
+# DEFAULT_SOURCE="coolsnowwolf/lede:master"
+
 LUCI_DEFAULT_LANG="en"
-#CPU_COUNT="$(cat /proc/cpuinfo | grep processor | wc -l) / 2"
 CPU_COUNT=4
-DEFAULT_SOURCE="coolsnowwolf/lede:master"
+DEFAULT_SOURCE="openwrt/openwrt"
+
 
 # users/repo:branch:openwrt_package_location:kernel_config_options:additiona_post_git_function
 ADD_PACKAGES="

@@ -97,7 +97,7 @@ if [ ! -d ${OPENWRT_BASE}/bin/targets ]; then
 
     if [ -f ${UCI_DEFAULT_CONFIG} ]; then
         if [ ! -z "$LUCI_DEFAULT_LANG" ]; then
-            sed -i "s/luci.main.lang=zh_cn/luci.main.lang=${LUCI_DEFAULT_LANG}/g" ${UCI_DEFAULT_CONFIG}
+            sed -i "s/luci.main.lang=/luci.main.lang=${LUCI_DEFAULT_LANG}/g" ${UCI_DEFAULT_CONFIG}
         fi    
         sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
         echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
