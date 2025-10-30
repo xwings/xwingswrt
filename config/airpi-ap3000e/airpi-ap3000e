@@ -6,8 +6,14 @@ CONFIG_TARGET_mediatek_filogic_DEVICE_airpi-ap3000e=y
 CONFIG_PACKAGE_kmod-Airpi-gpio-fan=y
 CONFIG_PACKAGE_luci-app-Airpifanctrl=y
 
+# SMS
+CONFIG_PACKAGE_sms-tool=y
+CONFIG_PACKAGE_luci-app-sms-tool=y
+
 CONFIG_TESTING_KERNEL=y
 
 # Boot Loaders
 CONFIG_PACKAGE_uboot-envtools=y
 # CONFIG_PACKAGE_fconfig is not set
+
+

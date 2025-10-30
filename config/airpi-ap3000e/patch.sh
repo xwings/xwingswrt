@@ -1,6 +1,9 @@
 EnablePatch() {
 # preparing files
     cp ../config/airpi-ap3000e/dts/*  ${OPENWRT_BASE}/target/linux/mediatek/dts/
+    cp -aR ../config/airpi-ap3000e/Airpi-gpio-fan ${OPENWRT_BASE}/package/kernel/
+    cp -aR ../config/airpi-ap3000e/luci-app-Airpifanctrl ${OPENWRT_BASE}/package/other/     
+    git clone https://github.com/4IceG/luci-app-sms-tool.git && mv luci-app-sms-tool/luci-app-sms-tool ${OPENWRT_BASE}/package/other/luci-app-sms-tool && rm -rf luci-app-sms-tool
     echo "" >> ${OPENWRT_BASE}/target/linux/mediatek/image/filogic.mk
     echo "
 define Device/airpi-ap3000e
