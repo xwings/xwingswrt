@@ -2,13 +2,15 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib
 
-while getopts ":c:r:d:" opt; do
+while getopts ":c:r:d:p:" opt; do
   case $opt in
     c) config_out="$OPTARG"
     ;;
     r) repo_out="$OPTARG"
     ;;
     d) debug_out="$OPTARG"
+    ;;
+    p) pre_down="$OPTARG"
     ;;
     \?) echo "Invalid option -$OPTARG" >&2
     exit 1
@@ -23,7 +25,9 @@ while getopts ":c:r:d:" opt; do
 done
 
 KERNEL_CONFIG=$config_out
+PRE_DOWNLOAD=$pre_down
 CODE_WORKSPACE="$(pwd)"
+PRE_DOWNLOAD_PATH="${CODE_WORKSPACE}/${PRE_DOWNLOAD}"
 BUILD_WORKSPACE="${CODE_WORKSPACE}/build"
 CONFIG_FILE="${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/${KERNEL_CONFIG}"
 
@@ -49,53 +53,66 @@ LUCI_DEFAULT_LANG="$(echo $LUCI_DEFAULT_LANG | awk '{print tolower($0)}')"
 
 fn_exists() { [ `type -t $1`"" == 'function' ]; }
 
-if [ -z $KERNEL_CONFIG ]; then
-    echo "Config [$KERNEL_CONFIG] not found, usage ./build.sh -c x86_64"
+if [ -z ${KERNEL_CONFIG} ]; then
+    echo "Error!!! Config [$KERNEL_CONFIG] not found, usage ./build.sh -c x86_64"
     exit 1
 fi
 
-if [ ! -d ${OPENWRT_BASE}/bin/targets ]; then
-    if [ ! -d ${BUILD_WORKSPACE}/config ]; then
-        mkdir -p ${BUILD_WORKSPACE}/config
-        cp -aRp ${CODE_WORKSPACE}/config/*  ${BUILD_WORKSPACE}/config
-        cat ${BUILD_WORKSPACE}/config/depends/general_config >> $CONFIG_FILE
-    fi
+if [ ! -d ${BUILD_WORKSPACE}/config ]; then
+    mkdir -p ${BUILD_WORKSPACE}/config
+    cp -aRp ${CODE_WORKSPACE}/config/*  ${BUILD_WORKSPACE}/config
+    cat ${BUILD_WORKSPACE}/config/depends/general_config >> $CONFIG_FILE
+fi
 
-    if [ ! -f ${CONFIG_FILE} ]; then
-        echo "Config not found: ${CONFIG_FILE}"
-        exit 1
-    fi
+if [ ! -f ${CONFIG_FILE} ]; then
+    echo "Error!!! Config not found: ${CONFIG_FILE}"
+    exit 1
+fi
 
-    for p in $DEL_PACKAGES; do
+if [ -z ${PRE_DOWNLOAD} ]; then
+    for p in ${DEL_PACKAGES}; do
         sed -i "/${p}/d" ${CONFIG_FILE}
     done
     unset p
 
-    for p in $ADD_PACKAGES; do
+    for p in ${ADD_PACKAGES}; do
         PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${p})
-        if [ ! -z $PACKAGE_CONFIG ]; then
-            if  ! grep -q "$PACKAGE_CONFIG" "$CONFIG_FILE" ; then
+        if [ ! -z ${PACKAGE_CONFIG} ]; then
+            if  ! grep -q "${PACKAGE_CONFIG}" "${CONFIG_FILE}" ; then
                 echo "CONFIG_${PACKAGE_CONFIG}" >> ${CONFIG_FILE}
             fi
         fi
     done
     unset p
-    
+
     cd ${BUILD_WORKSPACE}
-    if [ ! -d ${BUILD_WORKSPACE}/${REPO_NAME} ]; then
+    if [ ! -d ${OPENWRT_BASE} ]; then
         git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
     fi
 
-    if [ -f ../config/$KERNEL_CONFIG/patch.sh ]; then
-        source ../config/$KERNEL_CONFIG/patch.sh
+    if [ -f ../config/${KERNEL_CONFIG}/patch.sh ]; then
+        source ../config/${KERNEL_CONFIG}/patch.sh
         EnablePatch
     fi
-
+elif [ ! -z ${PRE_DOWNLOAD} ] && [ -d ${PRE_DOWNLOAD_PATH} ]; then
+    if [ -d ${OPENWRT_BASE} ]; then
+        rm -rf ${OPENWRT_BASE}
+    fi
+    cd ${BUILD_WORKSPACE}
+    cp -aRp ${PRE_DOWNLOAD_PATH} ${OPENWRT_BASE}
     cd ${OPENWRT_BASE}
-    ./scripts/feeds update -a
-    ./scripts/feeds install -a -p ipv6
-    ./scripts/feeds install -a
+    make clean
+else
+    echo "Error!!! Pre download folder not found"
+    exit 1
+fi
 
+cd ${OPENWRT_BASE}
+./scripts/feeds update -a
+./scripts/feeds install -a -p ipv6
+./scripts/feeds install -a
+
+if [ -z ${PRE_DOWNLOAD} ]; then
     if [ -f ${UCI_DEFAULT_CONFIG} ]; then
         if [ ! -z "$LUCI_DEFAULT_LANG" ]; then
             sed -i "s/luci.main.lang=/luci.main.lang=${LUCI_DEFAULT_LANG}/g" ${UCI_DEFAULT_CONFIG}
@@ -140,12 +157,11 @@ EOF
         fi
     done
     unset p
-
-    ./scripts/feeds install -a
-    make defconfig
-    make download -j$CPU_COUNT
-
 fi
+
+./scripts/feeds install -a
+make defconfig
+make download -j$CPU_COUNT
 
 cd ${OPENWRT_BASE}
 
