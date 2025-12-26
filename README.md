@@ -18,6 +18,7 @@ Supported Hardware:
 - GL-iNet AX1800
 - GL-iNet MT3000
 - GL-iNet MT6000
+- XiaoMi AX3600
 - Zyxel EX5700 (Custom)
 
 ---
