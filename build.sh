@@ -69,42 +69,34 @@ if [ ! -f ${CONFIG_FILE} ]; then
     exit 1
 fi
 
-if [ -z ${PRE_DOWNLOAD} ]; then
-    for p in ${DEL_PACKAGES}; do
-        sed -i "/${p}/d" ${CONFIG_FILE}
-    done
-    unset p
+for p in ${DEL_PACKAGES}; do
+    sed -i "/${p}/d" ${CONFIG_FILE}
+done
+unset p
 
-    for p in ${ADD_PACKAGES}; do
-        PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${p})
-        if [ ! -z ${PACKAGE_CONFIG} ]; then
-            if  ! grep -q "${PACKAGE_CONFIG}" "${CONFIG_FILE}" ; then
-                echo "CONFIG_${PACKAGE_CONFIG}" >> ${CONFIG_FILE}
-            fi
+for p in ${ADD_PACKAGES}; do
+    PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${p})
+    if [ ! -z ${PACKAGE_CONFIG} ]; then
+        if  ! grep -q "${PACKAGE_CONFIG}" "${CONFIG_FILE}" ; then
+            echo "CONFIG_${PACKAGE_CONFIG}" >> ${CONFIG_FILE}
         fi
-    done
-    unset p
+    fi
+done
+unset p
 
-    cd ${BUILD_WORKSPACE}
-    if [ ! -d ${OPENWRT_BASE} ]; then
-        git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
-    fi
+cd ${BUILD_WORKSPACE}
+if [ ! -d ${OPENWRT_BASE} ]; then
+    git clone -b ${REPO_BRANCH} --single-branch --depth 1 ${REPO_URL}.git ${REPO_NAME}
+fi
 
-    if [ -f ../config/${KERNEL_CONFIG}/patch.sh ]; then
-        source ../config/${KERNEL_CONFIG}/patch.sh
-        EnablePatch
-    fi
-elif [ ! -z ${PRE_DOWNLOAD} ] && [ -d ${PRE_DOWNLOAD_PATH} ]; then
-    if [ -d ${OPENWRT_BASE} ]; then
-        rm -rf ${OPENWRT_BASE}
-    fi
+if [ ! -z ${PRE_DOWNLOAD} ] && [ -d ${PRE_DOWNLOAD_PATH}/dl ]; then
     cd ${BUILD_WORKSPACE}
-    cp -aRp ${PRE_DOWNLOAD_PATH} ${OPENWRT_BASE}
-    cd ${OPENWRT_BASE}
-    make clean
-else
-    echo "Error!!! Pre download folder not found"
-    exit 1
+    cp -aRp ${PRE_DOWNLOAD_PATH}/dl ${OPENWRT_BASE}/dl
+fi
+
+if [ -f ${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/patch.sh ]; then
+    source ${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/patch.sh
+    EnablePatch
 fi
 
 cd ${OPENWRT_BASE}
@@ -112,52 +104,51 @@ cd ${OPENWRT_BASE}
 ./scripts/feeds install -a -p ipv6
 ./scripts/feeds install -a
 
-if [ -z ${PRE_DOWNLOAD} ]; then
-    if [ -f ${UCI_DEFAULT_CONFIG} ]; then
-        if [ ! -z "$LUCI_DEFAULT_LANG" ]; then
-            sed -i "s/luci.main.lang=/luci.main.lang=${LUCI_DEFAULT_LANG}/g" ${UCI_DEFAULT_CONFIG}
-        fi    
-        sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
-        echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
-        echo "" >> ${UCI_DEFAULT_CONFIG}
-        cat >> ${UCI_DEFAULT_CONFIG} <<EOF
-            sed -i '/check_signature/d' /etc/opkg.conf
-            if [ -z "\$(grep "REDIRECT --to-ports 53" /etc/firewall.user 2> /dev/null)" ]; then
-                echo '# iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-                echo '# iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-                echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-                echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-            fi
+if [ -f ${UCI_DEFAULT_CONFIG} ]; then
+    if [ ! -z "$LUCI_DEFAULT_LANG" ]; then
+        sed -i "s/luci.main.lang=/luci.main.lang=${LUCI_DEFAULT_LANG}/g" ${UCI_DEFAULT_CONFIG}
+    fi    
+    sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
+    echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
+    echo "" >> ${UCI_DEFAULT_CONFIG}
+    cat >> ${UCI_DEFAULT_CONFIG} <<EOF
+        sed -i '/check_signature/d' /etc/opkg.conf
+        if [ -z "\$(grep "REDIRECT --to-ports 53" /etc/firewall.user 2> /dev/null)" ]; then
+            echo '# iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
+            echo '# iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
+            echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
+            echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
+        fi
 EOF
-        echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
-    fi
-
-    cp ${CODE_WORKSPACE}/config/depends/banner ${BASE_FILES}/etc
-    sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
-    sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
-    cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
-    make defconfig
-    rm -f .config && cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
-    rm -r ${FEEDS_LUCI}/luci-theme-argon* 2>&1 || true
-
-    for p in $ADD_PACKAGES; do
-        PACKAGE_SOURCE=$p
-        PACKAGE_NAME="$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE} | cut -d \/ -f 2)"
-        PACKAGE_URL="https://github.com/$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE})"
-        PACKAGE_BRANCH=$(cut -d \: -f 2 <<< ${PACKAGE_SOURCE})
-        PACKAGE_LOCATION=$(cut -d \: -f 3 <<< ${PACKAGE_SOURCE})
-        PACKAGE_ADDON=$(cut -d \: -f 5 <<< ${PACKAGE_SOURCE})
-
-        if [ ! -z $PACKAGE_NAME ]; then
-            git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
-        fi
-        
-        if fn_exists $PACKAGE_ADDON; then
-            ${PACKAGE_ADDON}
-        fi
-    done
-    unset p
+    echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
 fi
+
+cp ${CODE_WORKSPACE}/config/depends/banner ${BASE_FILES}/etc
+sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
+sed -i -- 's:/bin/ash:'/bin/bash':g' ${BASE_FILES}/etc/passwd
+cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
+make defconfig
+rm -rf .config
+rm -rf ${FEEDS_LUCI}/luci-theme-argon* 2>&1 || true
+cp ${CONFIG_FILE} ${OPENWRT_BASE}/.config
+
+for p in $ADD_PACKAGES; do
+    PACKAGE_SOURCE=$p
+    PACKAGE_NAME="$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE} | cut -d \/ -f 2)"
+    PACKAGE_URL="https://github.com/$(cut -d \: -f 1 <<< ${PACKAGE_SOURCE})"
+    PACKAGE_BRANCH=$(cut -d \: -f 2 <<< ${PACKAGE_SOURCE})
+    PACKAGE_LOCATION=$(cut -d \: -f 3 <<< ${PACKAGE_SOURCE})
+    PACKAGE_ADDON=$(cut -d \: -f 5 <<< ${PACKAGE_SOURCE})
+
+    if [ ! -z $PACKAGE_NAME ]; then
+        git clone -b ${PACKAGE_BRANCH} --single-branch --depth 1 ${PACKAGE_URL} ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}
+    fi
+    
+    if fn_exists $PACKAGE_ADDON; then
+        ${PACKAGE_ADDON}
+    fi
+done
+unset p
 
 ./scripts/feeds install -a
 make defconfig
