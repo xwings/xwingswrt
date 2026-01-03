@@ -58,6 +58,7 @@ TARGET_FIRMWARE_END="
                         ext4-combined-efi.img.gz
                         squashfs-combined-efi.img.gz
                         squashfs-sysupgrade.bin
+                        squashfs-factory.ubi
                         "
 
 OpenClash() {
