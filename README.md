@@ -63,15 +63,9 @@ Build options:
 - -r : GitHub repo (optional) - default: openwrt/openwrt (format: user/repo:branch)
 - -d : Debug mode (optional) - set to 1 for verbose single-threaded build (make -j1 V=sc)
 
-Simple build:
-```
-cd xwingswrt
-./build.sh -c x86_64
-```
-
 Build with custom repository:
 ```
-./build.sh -c x86_64 -r coolsnowwolf/lede:master
+./build.sh -c x86_64 -r openwrt/openwrt:openwrt-25.12
 ```
 
 Debug build:
