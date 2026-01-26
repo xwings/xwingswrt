@@ -25,32 +25,6 @@ ADD_PACKAGES="
                 vernesong/OpenClash:dev:other:PACKAGE_luci-app-openclash=y:OpenClash
 "
 
-# 
-# Add a package name to remove from config
-#
-DEL_PACKAGES="
-                adb
-                serverchan
-                pushbot
-                docker
-                DOCKER
-                aliyundrive
-                qbittorrent
-                aria2
-                unblockmusic
-                UnblockNeteaseMusic
-                uugamebooster
-                usb-printer
-                syncdial
-                vsftpd
-                onliner
-                nfs
-                samba
-                davfs2
-                cifs
-                passwall
-    "
-
 TARGET_FIRMWARE_END="   
                         initramfs-kernel.bin
                         ext4-combined.img.gz

@@ -1,0 +1,13 @@
+CONFIG_TARGET_mediatek=y
+CONFIG_TARGET_mediatek_filogic=y
+CONFIG_TARGET_mediatek_filogic_DEVICE_glinet_gl-mt3600be=y
+
+CONFIG_TESTING_KERNEL=y
+
+#
+# Boot Loaders
+#
+# CONFIG_PACKAGE_fconfig is not set
+CONFIG_PACKAGE_uboot-envtools=y
+# end of Boot Loaders
+

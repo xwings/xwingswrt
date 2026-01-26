@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 
 while getopts ":c:r:d:p:" opt; do
   case $opt in
@@ -42,14 +42,10 @@ REPO_USER="$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE} | cut -d \/ -f 1)"
 REPO_URL="https://github.com/$(cut -d \: -f 1 <<< ${DEFAULT_SOURCE})"
 REPO_BRANCH=$(cut -d \: -f 2 <<< ${DEFAULT_SOURCE})
 OPENWRT_BASE="${BUILD_WORKSPACE}/${REPO_NAME}"
-UCI_DEFAULT_CONFIG="${OPENWRT_BASE}/package/lean/default-settings/files/zzz-default-settings"
-UCI_BASE_CONFIG="${OPENWRT_BASE}/package/feeds/luci/luci-base/root/etc/uci-defaults/luci-base"
 BASE_FILES="${OPENWRT_BASE}/package/base-files/files"
 FEEDS_LUCI="${OPENWRT_BASE}/package/feeds/luci"
 FEEDS_PKG="${OPENWRT_BASE}/package/feeds/packages"
 BUILD_DATE="$(date +%Y%m%d)"
-BASEONLY="$base_only"
-LUCI_DEFAULT_LANG="$(echo $LUCI_DEFAULT_LANG | awk '{print tolower($0)}')"
 
 fn_exists() { [ `type -t $1`"" == 'function' ]; }
 
@@ -68,11 +64,6 @@ if [ ! -f ${CONFIG_FILE} ]; then
     echo "Error!!! Config not found: ${CONFIG_FILE}"
     exit 1
 fi
-
-for p in ${DEL_PACKAGES}; do
-    sed -i "/${p}/d" ${CONFIG_FILE}
-done
-unset p
 
 for p in ${ADD_PACKAGES}; do
     PACKAGE_CONFIG=$(cut -d \: -f 4 <<< ${p})
@@ -96,32 +87,14 @@ fi
 
 if [ -f ${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/patch.sh ]; then
     source ${BUILD_WORKSPACE}/config/${KERNEL_CONFIG}/patch.sh
+    cd ${OPENWRT_BASE}
     EnablePatch
-fi
+fi  
 
 cd ${OPENWRT_BASE}
 ./scripts/feeds update -a
 ./scripts/feeds install -a -p ipv6
 ./scripts/feeds install -a
-
-if [ -f ${UCI_DEFAULT_CONFIG} ]; then
-    if [ ! -z "$LUCI_DEFAULT_LANG" ]; then
-        sed -i "s/luci.main.lang=/luci.main.lang=${LUCI_DEFAULT_LANG}/g" ${UCI_DEFAULT_CONFIG}
-    fi    
-    sed -i 's/^exit 0/# Customized init.d/g' ${UCI_DEFAULT_CONFIG}
-    echo "if [ -f /etc/init.d/tunnel ]; then /etc/init.d/tunnel enable ; fi" >> ${UCI_DEFAULT_CONFIG}
-    echo "" >> ${UCI_DEFAULT_CONFIG}
-    cat >> ${UCI_DEFAULT_CONFIG} <<EOF
-        sed -i '/check_signature/d' /etc/opkg.conf
-        if [ -z "\$(grep "REDIRECT --to-ports 53" /etc/firewall.user 2> /dev/null)" ]; then
-            echo '# iptables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-            echo '# iptables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-            echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p udp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-            echo '# [ -n "\$(command -v ip6tables)" ] && ip6tables -t nat -A PREROUTING -p tcp --dport 53 -j REDIRECT --to-ports 53' >> /etc/firewall.user
-        fi
-EOF
-    echo "exit 0" >> ${UCI_DEFAULT_CONFIG}
-fi
 
 cp ${CODE_WORKSPACE}/config/depends/banner ${BASE_FILES}/etc
 sed -i "s?/bin/login?/usr/libexec/login.sh?g" ${FEEDS_PKG}/ttyd/files/ttyd.config
