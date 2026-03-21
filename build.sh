@@ -24,6 +24,7 @@ while getopts ":c:r:d:p:" opt; do
   esac
 done
 
+CPU_COUNT=2
 KERNEL_CONFIG=$config_out
 PRE_DOWNLOAD=$pre_down
 CODE_WORKSPACE="$(pwd)"
@@ -128,6 +129,10 @@ make defconfig
 make download -j$CPU_COUNT
 
 cd ${OPENWRT_BASE}
+
+if grep -q "llvm.download-ci-llvm=true" package/feeds/packages/rust/Makefile; then
+    sed -i 's/llvm.download-ci-llvm=true/llvm.download-ci-llvm=false/g' package/feeds/packages/rust/Makefile
+fi
 
 if [ "$debug_out" == 1 ]; then
     make -j1 V=sc
