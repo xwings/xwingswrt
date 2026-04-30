@@ -38,4 +38,32 @@ TARGET_FIRMWARE_END="
 OpenClash() {
     cp -aRp ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/luci-app-openclash ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/
     rm -rf ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/
+
+    if grep -q "^CONFIG_TARGET_x86_64=y" ${OPENWRT_BASE}/.config; then
+        MIEMIETRON_ARCH="amd64"
+    else
+        MIEMIETRON_ARCH="arm64"
+    fi
+    MIEMIETRON_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${MIEMIETRON_ARCH}"
+
+    mkdir -p ${BASE_FILES}/etc/openclash/core
+    wget -O ${BASE_FILES}/etc/openclash/core/clash_meta "${MIEMIETRON_URL}"
+    [ -s ${BASE_FILES}/etc/openclash/core/clash_meta ] || { echo "miemietron download failed"; exit 1; }
+    chmod 4755 ${BASE_FILES}/etc/openclash/core/clash_meta
+
+    OPENCLASH_CORE_SH="${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/luci-app-openclash/root/usr/share/openclash/openclash_core.sh"
+
+    sed -i '/^CPU_MODEL=$(uci_get_config "core_version")/a\
+[ "$(uname -m)" = "aarch64" ] && MIEMIETRON_ARCH="arm64" || MIEMIETRON_ARCH="amd64"\
+CPU_MODEL="miemietron-${MIEMIETRON_ARCH}"' ${OPENCLASH_CORE_SH}
+
+    sed -i 's|DOWNLOAD_URL=".*clash-\${CPU_MODEL}\.tar\.gz"|DOWNLOAD_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${MIEMIETRON_ARCH}"|g' ${OPENCLASH_CORE_SH}
+
+    sed -i 's|if \[ ! -f "/tmp/clash_last_version" \]; then|if false; then|' ${OPENCLASH_CORE_SH}
+
+    sed -i 's#if \[ "\$CORE_CV" != "\$CORE_LV" \] || \[ -z "\$CORE_CV" \]; then#if true; then#' ${OPENCLASH_CORE_SH}
+
+    sed -i 's|gzip -t "\$DOWNLOAD_FILE" >/dev/null 2>&1|true|' ${OPENCLASH_CORE_SH}
+
+    sed -i 's|tar zxvfo "\$DOWNLOAD_FILE" -C /tmp >/dev/null 2>&1|cp "\$DOWNLOAD_FILE" /tmp/clash >/dev/null 2>\&1|' ${OPENCLASH_CORE_SH}
 }

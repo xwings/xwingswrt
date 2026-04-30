@@ -24,7 +24,7 @@ while getopts ":c:r:d:p:" opt; do
   esac
 done
 
-CPU_COUNT=2
+CPU_COUNT=1
 KERNEL_CONFIG=$config_out
 PRE_DOWNLOAD=$pre_down
 CODE_WORKSPACE="$(pwd)"
