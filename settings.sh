@@ -40,9 +40,9 @@ OpenClash() {
     rm -rf ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/
 
     if grep -q "^CONFIG_TARGET_x86_64=y" ${OPENWRT_BASE}/.config; then
-        MIEMIETRON_ARCH="amd64"
+        MIEMIETRON_ARCH="x86_64"
     else
-        MIEMIETRON_ARCH="arm64"
+        MIEMIETRON_ARCH="aarch64"
     fi
     MIEMIETRON_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${MIEMIETRON_ARCH}"
 

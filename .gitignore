@@ -1,3 +1,4 @@
 build/
 build_pre/
+openwrt_pre/
 config/xwings_*
