@@ -62,7 +62,7 @@ OpenClash() {
     OPENCLASH_CORE_SH="${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/luci-app-openclash/root/usr/share/openclash/openclash_core.sh"
 
     sed -i '/^CPU_MODEL=$(uci_get_config "core_version")/a\
-[ "$(uname -m)" = "aarch64" ] && XWINGSWRT_ARCH="arm64" || XWINGSWRT_ARCH="amd64"\
+XWINGSWRT_ARCH="$(uname -m)"\
 CPU_MODEL="miemietron-${XWINGSWRT_ARCH}"' ${OPENCLASH_CORE_SH}
 
     sed -i 's|DOWNLOAD_URL=".*clash-\${CPU_MODEL}\.tar\.gz"|DOWNLOAD_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${XWINGSWRT_ARCH}"|g' ${OPENCLASH_CORE_SH}
