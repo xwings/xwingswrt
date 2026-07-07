@@ -40,24 +40,32 @@ OpenClash() {
     rm -rf ${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/${PACKAGE_NAME}/
 
     if grep -q "^CONFIG_TARGET_x86_64=y" ${OPENWRT_BASE}/.config; then
-        MIEMIETRON_ARCH="x86_64"
+        XWINGSWRT_ARCH="x86_64"
     else
-        MIEMIETRON_ARCH="aarch64"
+        XWINGSWRT_ARCH="aarch64"
     fi
-    MIEMIETRON_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${MIEMIETRON_ARCH}"
+    
+    MIEMIETRON_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${XWINGSWRT_ARCH}"
 
     mkdir -p ${BASE_FILES}/etc/openclash/core
     wget -O ${BASE_FILES}/etc/openclash/core/clash_meta "${MIEMIETRON_URL}"
     [ -s ${BASE_FILES}/etc/openclash/core/clash_meta ] || { echo "miemietron download failed"; exit 1; }
     chmod 4755 ${BASE_FILES}/etc/openclash/core/clash_meta
 
+    VLESS_RS_URL="https://github.com/xwings/vless-rs/releases/latest/download/vless-rs-${XWINGSWRT_ARCH}"
+
+    mkdir -p ${BASE_FILES}/usr/bin
+    wget -O ${BASE_FILES}/usr/bin/vless-rs "${VLESS_RS_URL}"
+    [ -s ${BASE_FILES}/usr/bin/vless-rs ] || { echo "vless-rs download failed"; exit 1; }
+    chmod 4755 ${BASE_FILES}/usr/bin/vless-rs
+
     OPENCLASH_CORE_SH="${OPENWRT_BASE}/package/${PACKAGE_LOCATION}/luci-app-openclash/root/usr/share/openclash/openclash_core.sh"
 
     sed -i '/^CPU_MODEL=$(uci_get_config "core_version")/a\
-[ "$(uname -m)" = "aarch64" ] && MIEMIETRON_ARCH="arm64" || MIEMIETRON_ARCH="amd64"\
-CPU_MODEL="miemietron-${MIEMIETRON_ARCH}"' ${OPENCLASH_CORE_SH}
+[ "$(uname -m)" = "aarch64" ] && XWINGSWRT_ARCH="arm64" || XWINGSWRT_ARCH="amd64"\
+CPU_MODEL="miemietron-${XWINGSWRT_ARCH}"' ${OPENCLASH_CORE_SH}
 
-    sed -i 's|DOWNLOAD_URL=".*clash-\${CPU_MODEL}\.tar\.gz"|DOWNLOAD_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${MIEMIETRON_ARCH}"|g' ${OPENCLASH_CORE_SH}
+    sed -i 's|DOWNLOAD_URL=".*clash-\${CPU_MODEL}\.tar\.gz"|DOWNLOAD_URL="https://github.com/xwings/miemietron/releases/latest/download/miemietron-linux-${XWINGSWRT_ARCH}"|g' ${OPENCLASH_CORE_SH}
 
     sed -i 's|if \[ ! -f "/tmp/clash_last_version" \]; then|if false; then|' ${OPENCLASH_CORE_SH}
 
